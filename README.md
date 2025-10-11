@@ -79,8 +79,8 @@ It’s **strongly recommended** to run these challenges in a **clean VM** or **s
 * ☸️ **Kubernetes challenges**: use Kind (Kubernetes in Docker), so you can run clusters directly inside Docker — no separate VM required.
 * Alternatively, you can spin up:
 
-  * **Azure:** use `Standard_B2s`
-  * **AWS:** use `t3.medium`
+  * **Azure:** you may use `Standard_B2s`
+  * **AWS:** you may use `t3.medium`
   * **Local:** use Multipass, Vagrant, or Docker Desktop with a Linux container backend
 
 ---
