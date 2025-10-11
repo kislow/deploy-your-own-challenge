@@ -1,0 +1,29 @@
+.venv/
+.idea/
+# Terraform files
+*.tfstate
+*.tfstate.*
+*.tfplan
+.terraform/
+.terraform.lock.hcl
+terraform*
+
+# SSH keys
+.ssh/
+*.pem
+*.key
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# IDE files
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment variables
+.env
+*.tfvars
+!terraform.tfvars.example

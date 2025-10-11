@@ -1,0 +1,110 @@
+- import_role:
+    name:    kubectx
+- import_role:
+    name:    k9s
+- import_role:
+    name:    helm
+- import_role:
+    name:    stern
+- import_role:
+    name: geerlingguy.docker
+- import_role:
+    name: andrewrothstein.kind
+- name: Install fzf
+  apt:
+    name: fzf
+
+- name: Enable root login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#PermitRootLogin'
+    line: PermitRootLogin yes
+    validate: /usr/sbin/sshd -T -f %s
+
+- name: Enable password login
+  lineinfile:
+    path: /etc/ssh/sshd_config
+    regexp: '^#PasswordAuthentication'
+    line: PasswordAuthentication yes
+    validate: /usr/sbin/sshd -T -f %s
+
+- name: Restart sshd
+  service:
+    name: sshd
+    state: restarted
+
+- name: Check if root password exists
+  stat:
+    path: "{{ dir_path.rootpw_file }}"
+  register: rootpw_stat
+
+- name: Create root password
+  set_fact:
+    password: "{{ lookup('password', '/dev/null chars=ascii_letters,digits length=32') }}"
+  when: not rootpw_stat.stat.exists
+
+- name: Store password
+  copy:
+    dest: "{{ dir_path.rootpw_file }}"
+    content: "{{ password }}"
+  when: not rootpw_stat.stat.exists
+
+- name: Set password for root
+  user:
+    name: root
+    password: "{{ password | password_hash('sha512') }}"
+  when: not rootpw_stat.stat.exists
+
+- name: Create excerise dir
+  file:
+    path: "{{ dir_path.challenge }}"
+    state: directory
+  tags: base
+
+- name: create kubernetes challenge dir
+  file:
+    path: "{{ dir_path.challenge }}/"
+    state: directory
+    mode: 0777
+  tags: base
+
+- name: Copy kubernetes exercises to challenge path
+  copy:
+    src: "{{ dir_path.k8s }}"
+    dest: "{{ dir_path.challenge }}/"
+    mode: 0777
+  tags: base
+
+- name: Generate locales
+  locale_gen:
+    name: en_US.UTF-8
+
+- name: set as default locale
+  command: localectl set-locale LANGUAGE=en_US.UTF-8 LANG=en_US.UTF-8
+
+- name: Force set default locale
+  copy:
+    dest: /etc/default/locale
+    content: |
+      LANG=en_US.UTF-8
+      LANGUAGE=en_US.UTF-8
+
+- name: Load locales
+  shell: . /etc/default/locale
+
+- name: install pip
+  apt:
+    name: python3-pip
+    update_cache: yes
+    state: present
+
+- name: Install ansible
+  pip:
+    name: ansible
+  environment:
+    LANG: en_US.UTF-8
+    LANGUAGE: en_US.UTF-8
+
+- name: Install docker-py
+  pip:
+    name: docker-py

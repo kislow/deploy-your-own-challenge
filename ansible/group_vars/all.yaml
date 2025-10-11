@@ -1,0 +1,11 @@
+dir_path:
+  kind_config: /opt/kind
+  challenge: ~/challenge
+  go: "{{ playbook_dir }}/../challenges/go-application/golang"
+  curl: "{{ playbook_dir }}/../challenges/linux/curl"
+  webserver: "{{ playbook_dir }}/../challenges/linux/webserver"
+  psql: "{{ playbook_dir }}/../challenges/postgres"
+  rootpw_file: /root/rootpw
+
+pub_keys:
+  - "ssh-ed25519 BBBBC3NzaC1lZDI1NTE5AAAAIC18cEmgukkzGJCCRdEnEl7cAkUfj/77df7a7dsf7d7d k.islow@example.com"

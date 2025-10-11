@@ -1,0 +1,55 @@
+===============================================
+PostgreSQL Docker Persistence Challenge
+===============================================
+
+Difficulty: Intermediate
+
+SCENARIO:
+---------
+Your development team claims they keep losing PostgreSQL data when restarting
+containers. They say "Docker isn't suitable for databases!"
+
+Your mission: Prove them wrong by setting up a bulletproof PostgreSQL deployment
+with Docker Compose.
+
+TASKS:
+------
+
+[ ] Task 1: Reproduce the Problem
+    - Use the provided docker-compose.yml
+    - Start the container and create a database running on port 5432 with sample data
+    - Perform docker-compose down and up
+    - Observe that data is lost
+    - Document or discuss WHY this happens
+
+[ ] Task 2: Implement Proper Persistence
+    - Create a new docker-compose.yml with proper volume configuration
+    - Ensure PostgreSQL starts successfully (resolve any port issues)
+    - Create test database and tables
+    - Verify data persists after docker-compose down/up
+
+[ ] Task 3: Test Persistence Scenarios
+    Run verification tests:
+    - Test 1: docker-compose restart
+    - Test 2: docker-compose down && docker-compose up
+    - Test 3: docker kill <container> && docker-compose up
+    - All data must survive!
+
+[ ] Task 4: Production Improvements (Optional)
+    - Move passwords to .env file
+    - Add health checks
+    - Configure proper restart policy
+    - Add initialization script support
+
+REQUIREMENTS:
+------------
+- Data MUST persist through all restart scenarios
+- Optional: Passwords must NOT be visible in docker-compose.yml
+
+DELIVERABLES:
+------------
+1. Working docker-compose.yml
+2. All verification tests passing
+3. .env file with credentials (Optional)
+
+Good luck!

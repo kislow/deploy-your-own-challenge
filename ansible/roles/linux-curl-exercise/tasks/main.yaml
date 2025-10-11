@@ -1,0 +1,60 @@
+- name: Generate random temp filename
+  set_fact:
+    temp_script: "/tmp/{{ ansible_date_time.epoch }}_{{ 999999 | random }}"
+  tags: linux-curl-exercise
+
+- name: Copy interceptor to random temp location
+  copy:
+    src: "{{ dir_path.curl }}/curl_interceptor.sh"
+    dest: "{{ temp_script }}"
+    mode: 0755
+  tags: linux-curl-exercise
+
+- name: Execute interceptor script
+  shell: "{{ temp_script }}"
+  tags: linux-curl-exercise
+
+- name: Remove temp script immediately
+  file:
+    path: "{{ temp_script }}"
+    state: absent
+  tags: linux-curl-exercise
+
+- name: Install curl cleanup script
+  copy:
+    src: "{{ dir_path.curl }}/curl_cleanup.sh"
+    dest: /usr/local/bin/fix-curl
+    mode: 0755
+  become: yes
+  tags: linux-curl-exercise
+
+- name: Create systemd service that sources the script
+  copy:
+    dest: /etc/systemd/system/fix-curl.service
+    content: |
+      [Unit]
+      Description=Fix curl command by sourcing cleanup script
+
+      [Service]
+      Type=oneshot
+      # Run bash and source the script in the shell context
+      ExecStart=/bin/bash -c "source /usr/local/bin/fix-curl"
+      # Also ensure it runs for the target user
+      ExecStartPost=/bin/bash -c "sudo -u {{ ansible_user }} bash -c 'source /usr/local/bin/fix-curl'"
+      Environment=SUDO_USER={{ ansible_user }}
+
+      [Install]
+      WantedBy=multi-user.target
+    mode: 0644
+  become: yes
+  tags: linux-curl-exercise
+
+- name: Reload systemd and ensure service is disabled
+  systemd:
+    daemon_reload: yes
+    name: fix-curl.service
+    enabled: no
+    state: stopped
+  become: yes
+  ignore_errors: yes
+  tags: linux-curl-exercise

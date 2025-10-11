@@ -1,0 +1,27 @@
+---
+# ansible/roles/postgres-docker-exercise/tasks/main.yaml
+
+- name: Setup PostgreSQL Docker challenge
+  become: yes
+  block:
+    - name: Create postgres-docker challenge dir in user home
+      file:
+        path: "/home/{{ ansible_user }}/postgres-docker"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+      tags: postgres-docker-exercise
+
+    - name: Copy exercise files
+      copy:
+        src: "{{ dir_path.psql }}/exercise/"
+        dest: "/home/{{ ansible_user }}/postgres-docker"
+        mode: '0644'
+      tags: postgres-docker-exercise
+
+    - name: Pull PostgreSQL Docker image
+      docker_image:
+        name: postgres:16
+        source: pull
+      tags: postgres-docker-exercise

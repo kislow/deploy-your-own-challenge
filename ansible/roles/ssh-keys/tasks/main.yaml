@@ -1,0 +1,14 @@
+- name: Ensure .ssh directory exists
+  file:
+    path: "{{ ssh_user_home | default(ansible_user_dir) }}/.ssh"
+    state: directory
+    mode: '0700'
+    owner: "{{ ssh_user | default(ansible_user) }}"
+
+- name: Add authorized SSH keys
+  authorized_key:
+    user: "{{ ssh_user | default(ansible_user) }}"
+    key: "{{ item }}"
+    state: present
+  loop: "{{ pub_keys | default([]) }}"
+  tags: ssh-keys

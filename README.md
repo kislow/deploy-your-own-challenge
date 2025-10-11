@@ -7,7 +7,7 @@ This repo is built for engineers who believe the best way to learn DevOps is to 
 ## No Platforms. No Excuses.
 
 Not every challenge needs a Hackerrank sign-up or pre-built test.
-Sometimes the best exercises are **custom-built**, creative, cost-effective, and tailored to **your company’s workflows** or **internal upskilling programs**.  
+Sometimes the best exercises are **custom-built**, creative, cost-effective, and tailored to **your company’s workflows** or **internal upskilling programs**.
 This repo is for engineers who learn by deploying, experimenting, and thinking differently.
 
 🧩 Tips for Junior Engineers
@@ -25,11 +25,11 @@ AI can be a helpful assistant, but don’t let it replace understanding why some
 
 Each challenge folder contains:
 
-- **Scenario:** a real-world DevOps problem or setup to tackle  
-- **Setup:** Docker Compose or Kubernetes manifests to spin up the environment  
-- **Objective:** clear learning goals and success criteria  
-- **Hints (optional):** small nudges if you get stuck  
-- **Cleanup:** how to tear it down safely  
+- **Scenario:** a real-world DevOps problem or setup to tackle
+- **Setup:** Docker Compose or Kubernetes manifests to spin up the environment
+- **Objective:** clear learning goals and success criteria
+- **Hints (optional):** small nudges if you get stuck
+- **Cleanup:** how to tear it down safely
 
 💡 *Think of it as a lab manual meets production chaos.*
 
@@ -154,4 +154,3 @@ Tag your setups, screenshots, or notes with **#DeployYourOwnDevOps** on social, 
 > “You don’t learn DevOps by watching you learn it by deploying.”
 
 ---
-

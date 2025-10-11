@@ -1,0 +1,20 @@
+🔧 TROUBLESHOOTING EXERCISE
+
+📊 Scenario:
+Your teammate deployed a Go API but reports "weird behavior"
+The API should echo the MESSAGE environment variable
+
+🎯 Your Mission:
+1. Validate the API is working correctly
+2. Ensure responses match expectations
+3. If anything seems wrong, fix it
+
+📋 Investigation Steps:
+- Test the API endpoint
+- Compare with expected behavior
+- Check all system components
+- Try alternative testing methods
+
+⚡ Quick Start: curl localhost:8080/
+
+🏆 Success: API returns correct MESSAGE value consistently

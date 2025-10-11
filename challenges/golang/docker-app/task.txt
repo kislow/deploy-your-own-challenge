@@ -1,0 +1,95 @@
+===============================================
+Go Application Containerization Challenge
+=========================================
+
+**Difficulty:** Beginner → Intermediate
+
+---
+
+### SCENARIO:
+
+Your team has developed a lightweight Go web service using the **Gin** framework.
+It works fine locally — but now they want to containerize it for deployment.
+
+They’ve tried a few Dockerfiles, but none seem to work reliably.
+Either dependencies are missing, the binary fails to execute, or port mappings don’t work.
+
+**Your mission:** Build a working Docker image that runs the Go web service correctly and exposes it to the world!
+
+---
+
+### TASKS:
+
+**[ ] Task 1: Understand the Application**
+
+* Review the provided Go source code.
+* The app listens on port **8080** and returns a JSON message from an environment variable `MESSAGE`.
+* Test locally using:
+
+  ```bash
+  go run main.go
+  ```
+
+  Visit [http://localhost:8080](http://localhost:8080) — you should see the message output.
+
+---
+
+**[ ] Task 2: Write a Dockerfile**
+
+* Use a lightweight base image (e.g., `golang:1.22-alpine`).
+* Copy all project files and dependencies.
+* Run:
+
+  ```bash
+  go mod download
+  go build -o go-application .
+  ```
+* Set `/app` as your working directory.
+* Expose port **8080**.
+* Run the binary as the container’s entrypoint.
+
+---
+
+**[ ] Task 3: Build and Run Your Container**
+
+* Build the image:
+
+  ```bash
+  docker build -t go-app .
+  ```
+* Run the container:
+
+  ```bash
+  docker run -e MESSAGE="Hello from Docker!" -p 8080:8080 go-app
+  ```
+* Verify that [http://localhost:8080](http://localhost:8080) returns your message in JSON format.
+
+---
+
+**[ ] Task 4: Bonus – Production Readiness**
+
+* Use a **multi-stage Docker build** to minimize image size.
+* Add a `.dockerignore` file to exclude unnecessary files.
+* (Optional) Add a basic **health check** in the Dockerfile.
+
+---
+
+### REQUIREMENTS:
+
+* Container must successfully build and run.
+* Application must respond on **port 8080** with a JSON message.
+* The environment variable `MESSAGE` must be configurable at runtime.
+* Bonus: Keep the final image under **50MB**.
+
+---
+
+### DELIVERABLES:
+
+1. Working `Dockerfile`.
+2. Screenshot or command output showing successful build and run.
+3. (Optional) `.dockerignore` and multi-stage build example.
+
+---
+
+🔥 **Good luck, Engineer!**
+Prove that Go apps can be lightweight, fast, and Docker-ready — just like a pro.

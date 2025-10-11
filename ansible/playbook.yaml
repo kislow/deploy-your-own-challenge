@@ -1,0 +1,23 @@
+---
+- hosts: all
+  roles:
+    - role: base
+      tags: [base]
+
+    - role: ssh-keys
+      tags: [ssh-keys]
+
+    - role: kind
+      tags: [kind]
+
+    - role: go-docker-exercise
+      tags: [go-docker-exercise]
+
+    - role: linux-curl-exercise
+      tags: [linux-curl-exercise]
+
+    - role: linux-webserver-exercise
+      tags: [linux-webserver-exercise]
+
+    - role: postgres-docker-exercise
+      tags: [postgres-docker-exercise]

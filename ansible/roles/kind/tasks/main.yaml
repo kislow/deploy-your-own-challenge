@@ -1,0 +1,47 @@
+- name: Copy bash aliases
+  copy:
+    src: bash_aliases
+    dest: /root/.bash_aliases
+
+- name: Create config directory
+  file:
+    path: "{{ dir_path.kind_config }}"
+    state: directory
+
+- name: Copy ingress config
+  copy:
+    src: "{{ item }}"
+    dest: "{{ dir_path.kind_config }}/{{ item }}"
+  with_items:
+    - ingress-test.yaml
+    - kind-config.yaml
+
+- name: Get kind clusters
+  command: kind get clusters
+  register: kind_clusters
+
+- name: Create kind cluster
+  command: "kind create cluster --config {{ dir_path.kind_config }}/kind-config.yaml"
+  when: kind_clusters.stdout | length == 0
+
+- name: Deploy nginx ingress gateway
+  command: kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/main/deploy/static/provider/kind/deploy.yaml
+
+- name: Wait for the nginx pods to be created
+  command: sleep 5
+
+- name: Wait until nginx is up
+  command: kubectl wait --namespace ingress-nginx --for=condition=ready pod --selector=app.kubernetes.io/component=controller --timeout=90s
+
+- name: Deploy ingress test
+  command: "kubectl apply -f {{ dir_path.kind_config }}/ingress-test.yaml"
+
+- name: Wait for the ingress pods to be created
+  command: sleep 5
+
+- name: Wait for ingress test to come up
+  command: kubectl wait --namespace ingress-test --for=condition=ready pod --selector=app=ingress-test --timeout=90s
+
+- name: Check if ingress is reachable
+  uri:
+    url: http://{{ ansible_host }}/ingress-test
