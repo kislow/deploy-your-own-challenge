@@ -1,212 +1,149 @@
-# Makefile for Ansible Challenge Deployment
-# Usage: make <target> HOST=<ip_address>
+# ============================================
+# Ansible Challenge Deployment (Lean Makefile)
+# ============================================
 
-# Default values
+# Defaults
 ANSIBLE_DIR := ansible
 PLAYBOOK := $(ANSIBLE_DIR)/playbook.yaml
 ANSIBLE_OPTS := --diff -v
-
 export ANSIBLE_CONFIG := $(ANSIBLE_DIR)/ansible.cfg
 
-# Check if HOST is set
+# Script locations
+SETUP_SCRIPT := ./utils/setup_env.sh
+CHALLENGE_SCRIPT := ./utils/challenges.sh
+EC2_SCRIPT := ./utils/ec2_manager.sh
+
+# Define comma for use in recipes
+comma := ,
+
+# ============================================
+# Environment Setup
+# ============================================
+
+.PHONY: setup
+setup:
+	@echo "🧩 Setting up environment..."
+	@$(SETUP_SCRIPT)
+
+# ============================================
+# Terraform EC2 Management
+# ============================================
+
+.PHONY: ec2-plan ec2-create ec2-destroy
+ec2-plan:
+	@$(EC2_SCRIPT) plan
+ec2-create:
+	@$(EC2_SCRIPT) create
+ec2-destroy:
+	@$(EC2_SCRIPT) destroy
+
+# ============================================
+# Ansible Challenge Targets
+# ============================================
+
+# Verify HOST is set before running anything
 check-host:
 ifndef HOST
 	$(error HOST is not set. Usage: make <target> HOST=<ip_address>)
 endif
 
-# Helper function for running ansible-playbook
-define run-ansible
-	@echo "🚀 Running: $(1)"
-	ansible-playbook $(ANSIBLE_OPTS) -i $(HOST), $(PLAYBOOK) $(2)
-endef
+# Dynamic Challenge Runner
+.PHONY: base kind go-app curl webserver psql ssh-keys
+base kind go-app curl webserver psql ssh-keys: check-host
+	@$(CHALLENGE_SCRIPT) $@ HOST=$(HOST)
 
-# Main deployment (all roles)
-.PHONY: deploy
+# ============================================
+# Deployment Modes
+# ============================================
+
+.PHONY: deploy quick infra all-challenges deploy-except dry-run dry-run-tag
 deploy: check-host
-	$(call run-ansible,Full deployment,)
+	@$(CHALLENGE_SCRIPT) deploy HOST=$(HOST)
 
-# Quick deploy with specific tags
-.PHONY: quick
 quick: check-host
 ifndef TAGS
 	$(error TAGS is not set. Usage: make quick HOST=<ip> TAGS=<tag1,tag2>)
 endif
-	$(call run-ansible,Quick deployment with tags: $(TAGS),--tags $(TAGS))
+	@$(CHALLENGE_SCRIPT) quick HOST=$(HOST) TAGS=$(TAGS)
 
-# Base setup
-.PHONY: base
-base: check-host
-	$(call run-ansible,Base setup,--tags base)
-
-# Infrastructure components
-.PHONY: kind
-kind: check-host
-	$(call run-ansible,Kind cluster setup,--tags kind)
-
-.PHONY: go-app
-docker: check-host
-	$(call run-ansible,Go App exercise,--tags go-docker-exercise)
-
-.PHONY: curl
-curl: check-host
-	$(call run-ansible,Linux curl exercise,--tags linux-curl-exercise)
-
-.PHONY: webserver
-webserver: check-host
-	$(call run-ansible,Linux webserver exercise,--tags linux-webserver-exercise)
-
-.PHONY: psql
-psql: check-host
-	$(call run-ansible,Postgresql exercise,--tags postgres-docker-exercise)
-
-# SSH Key management (uses group_vars/all.yml)
-.PHONY: ssh-keys
-ssh-keys: check-host
-	$(call run-ansible,Add SSH public keys,--tags ssh-keys)
-
-.PHONY: ssh-keys-dry-run
-ssh-keys-dry-run: check-host
-	@echo "🔍 Dry run - SSH keys deployment"
-	ansible-playbook $(ANSIBLE_OPTS) -i $(HOST), $(PLAYBOOK) --tags ssh-keys --check --diff
-
-.PHONY: ssh-keys-info
-ssh-keys-info:
-	@echo "📋 SSH Keys Information:"
-	@echo "   Keys are defined in: $(ANSIBLE_DIR)/group_vars/all.yml"
-	@echo "   Variable name: pub_keys"
-	@echo "   Format: ssh-rsa AAAAB3NzaC1yc2E... comment"
-	@echo ""
-	@echo "Usage: make ssh-keys HOST=192.168.1.100"
-	@echo "       make ssh-keys-dry-run HOST=192.168.1.100"
-
-# Combination deployments
-.PHONY: all-exercises
-all-exercises: check-host
-	$(call run-ansible,All exercises,--tags go-docker-exercise$(comma)linux-curl-exercise$(comma)linux-webserver-exercise$(comma)postgres-docker-exercise)
-
-
-.PHONY: infra
 infra: check-host
-	$(call run-ansible,Infrastructure setup,--tags base$(comma)kind)
+	@$(CHALLENGE_SCRIPT) infra HOST=$(HOST)
 
-# Deploy with exclusions
-.PHONY: deploy-except
+all-challenges: check-host
+	@$(CHALLENGE_SCRIPT) all-challenges HOST=$(HOST)
+
 deploy-except: check-host
 ifndef SKIP
 	$(error SKIP is not set. Usage: make deploy-except HOST=<ip> SKIP=<tag1,tag2>)
 endif
-	$(call run-ansible,Deployment excluding: $(SKIP),--skip-tags $(SKIP))
+	@$(CHALLENGE_SCRIPT) deploy-except HOST=$(HOST) SKIP=$(SKIP)
 
-# Dry run commands
-.PHONY: dry-run
 dry-run: check-host
-	@echo "🔍 Dry run - Full deployment"
-	ansible-playbook $(ANSIBLE_OPTS) -i $(HOST), $(PLAYBOOK) --check
+	@$(CHALLENGE_SCRIPT) dry-run HOST=$(HOST)
 
-.PHONY: dry-run-tag
 dry-run-tag: check-host
 ifndef TAGS
 	$(error TAGS is not set. Usage: make dry-run-tag HOST=<ip> TAGS=<tag>)
 endif
-	@echo "🔍 Dry run with tags: $(TAGS)"
-	ansible-playbook $(ANSIBLE_OPTS) -i $(HOST), $(PLAYBOOK) --tags $(TAGS) --check
+	@$(CHALLENGE_SCRIPT) dry-run-tag HOST=$(HOST) TAGS=$(TAGS)
 
-.PHONY: list-tags
+# ============================================
+# Utility Targets
+# ============================================
+
+.PHONY: list-tags show-config test-connection clean help
+
 list-tags:
-	@echo "📋 Available tags (auto-detected):"
+	@echo "📋 Available role tags:"
 	@find $(ANSIBLE_DIR)/roles -maxdepth 1 -type d ! -path "$(ANSIBLE_DIR)/roles" -exec basename {} \; | sed 's/^/  - /'
 
-.PHONY: show-config
 show-config:
 	@echo "📋 Ansible Configuration:"
-	@echo "   Playbook: $(PLAYBOOK)"
-	@echo "   Config file: $(ANSIBLE_CONFIG)"
-	@echo "   ANSIBLE_CONFIG env: $(ANSIBLE_CONFIG)"
+	@echo "  Playbook: $(PLAYBOOK)"
+	@echo "  Config: $(ANSIBLE_CONFIG)"
 	@if [ -f "$(ANSIBLE_CONFIG)" ]; then \
-		echo ""; \
-		echo "   ansible.cfg contents:"; \
-		echo "   ---------------------"; \
-		grep -E "^[^#;]" $(ANSIBLE_CONFIG) | sed 's/^/   /'; \
+		echo ""; echo "Contents:"; grep -E "^[^#;]" $(ANSIBLE_CONFIG) | sed 's/^/  /'; \
 	else \
-		echo "   ⚠️  No ansible.cfg found at $(ANSIBLE_CONFIG)"; \
+		echo "⚠️ No ansible.cfg found at $(ANSIBLE_CONFIG)"; \
 	fi
 
-.PHONY: test-connection
 test-connection: check-host
 	@echo "🔌 Testing SSH connection to $(HOST)..."
 	@ansible all -m ping -i $(HOST), || \
-		(echo ""; \
-		echo "❌ Connection failed!"; \
-		echo ""; \
-		echo "Troubleshooting tips:"; \
-		echo "1. Check if the SSH key is correct:"; \
-		echo "   make test-connection HOST=$(HOST)"; \
-		echo ""; \
-		echo "2. Test SSH manually:"; \
-		echo "   ssh <user>@$(HOST)"; \
-		echo ""; \
-		echo "3. Ensure the key has correct permissions:"; \
-		echo "   chmod 600 <your-key-file>"; \
-		echo ""; \
-		echo "4. Check if you need a different user:"; \
-		echo "   Common users: ubuntu, ec2-user, admin, root, centos"; \
-		echo ""; \
-		exit 1)
+		(echo "❌ SSH connection failed! Try manually: ssh <user>@$(HOST)"; exit 1)
 
-.PHONY: help
+clean:
+	@echo "🧹 Cleaning up retry files..."
+	@find . -name "*.retry" -delete 2>/dev/null || true
+
 help:
-	@echo "🛠️  Ansible Challenge Deployment Makefile"
+	@echo "🛠️  Ansible Challenge Deployment"
 	@echo ""
-	@echo "📍 Location: This Makefile should be in the project root directory"
-	@echo "            (same level as README.md, .gitignore, and the 'ansible' folder)"
+	@echo "Usage: make <target> HOST=<ip> [TAGS=...] [SKIP=...]"
 	@echo ""
-	@echo "Usage: make <target> HOST=<ip_address> [OPTIONS]"
+	@echo "Setup & Utilities:"
+	@echo "  setup           - Prepare environment (Python, Ansible, Docker, Roles)"
+	@echo "  list-tags       - List available role tags"
+	@echo "  show-config     - Show ansible.cfg details"
+	@echo "  test-connection - Ping target host via Ansible"
 	@echo ""
-	@echo "Main Targets:"
-	@echo "  deploy           - Run full deployment"
-	@echo "  quick            - Deploy specific tags (requires TAGS=tag1,tag2)"
-	@echo "  infra            - Deploy infrastructure (base, kind, wetty)"
-	@echo "  all-exercises    - Deploy all exercises"
+	@echo "Deployments:"
+	@echo "  deploy          - Full deployment"
+	@echo "  quick           - Deploy specific tags (TAGS=...)"
+	@echo "  infra           - Deploy base infra (base, kind)"
+	@echo "  all-challenges   - Deploy all challenges"
+	@echo "  deploy-except   - Deploy all except SKIP=..."
 	@echo ""
-	@echo "Individual Exercises:"
-	@echo "  base             - Base setup"
-	@echo "  kind             - Kind cluster"
-	@echo "  go-app           - Go App exercise"
-	@echo "  helm             - Helm exercise"
-	@echo "  curl             - Linux curl exercise"
-	@echo "  webserver        - Linux webserver exercise"
-	@echo "  psql        - Postgresql docker exercise"
-	@echo "  ssh-keys         - Add SSH public keys from group_vars"
+	@echo "Challenges:"
+	@echo "  base, kind, go-app, curl, webserver, psql, ssh-keys"
 	@echo ""
-	@echo "Combination Targets:"
-	@echo "  deploy-except    - Deploy all except specified (requires SKIP=tag1,tag2)"
-	@echo ""
-	@echo "Utility Targets:"
-	@echo "  dry-run          - Dry run full deployment"
-	@echo "  dry-run-tag      - Dry run specific tags (requires TAGS=tag)"
-	@echo "  ssh-keys-dry-run - Dry run SSH key deployment"
-	@echo "  ssh-keys-info    - Show SSH key configuration info"
-	@echo "  list-tags        - List all available tags"
-	@echo "  help             - Show this help message"
+	@echo "Terraform EC2:"
+	@echo "  ec2-plan, ec2-create, ec2-destroy"
 	@echo ""
 	@echo "Examples:"
-	@echo "  make deploy HOST=192.168.1.100"
-	@echo "  make k8s-pod HOST=192.168.1.100"
-	@echo "  make quick HOST=192.168.1.100 TAGS=docker,helm"
-	@echo "  make ssh-keys HOST=192.168.1.100"
-	@echo "  make ssh-keys-dry-run HOST=192.168.1.100"
-	@echo "  make deploy-except HOST=192.168.1.100 SKIP=postgres-docker,linux-webserver"
-	@echo "  make dry-run HOST=192.168.1.100"
+	@echo "  make setup"
+	@echo "  make deploy HOST=127.0.0.1"
+	@echo "  make quick HOST=127.0.0.1 TAGS=linux-curl-challenge"
+	@echo "  make ec2-plan"
 
-# Clean up (if needed for local testing artifacts)
-.PHONY: clean
-clean:
-	@echo "🧹 Cleaning up local artifacts..."
-	@find . -name "*.retry" -delete 2>/dev/null || true
-	@echo "✨ Clean complete"
-
-# Define comma for use in recipes
-comma := ,
-
-# Default target
 .DEFAULT_GOAL := help

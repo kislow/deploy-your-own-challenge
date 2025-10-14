@@ -29,7 +29,6 @@ Each challenge folder contains:
 - **Setup:** Docker Compose or Kubernetes manifests to spin up the environment
 - **Objective:** clear learning goals and success criteria
 - **Hints (optional):** small nudges if you get stuck
-- **Cleanup:** how to tear it down safely
 
 💡 *Think of it as a lab manual meets production chaos.*
 
@@ -56,7 +55,7 @@ Each challenge folder contains:
      private_key_file = /path/to/private_key.pem
      ```
 
-   ✅ *This is required for all VM-based exercises. For local Docker or Kind clusters, this may not be necessary if Ansible runs locally.*
+   ✅ *This is required for all VM-based challenges. For local Docker or Kind clusters, this may not be necessary if Ansible runs locally.*
 
 ---
 
@@ -88,7 +87,7 @@ It’s **strongly recommended** to run these challenges in a **clean VM** or **s
 ## 🚢 Deployments
 
 Each challenge comes with a Makefile to simplify deployment and tear-downs.
-You can deploy specific exercises, groups, or even combinations of tags.
+You can deploy specific challenges, groups, or even combinations of tags.
 
 ```sh
 # Exercise deployment
@@ -98,8 +97,8 @@ $ make <challenge> HOST=<IP>       # e.g. make linux-curl HOST=192.168.1.10 or l
 # Combination targets  #
 #----------------------#
 
-# Deploy all exercises
-$ make all-exercises HOST=<IP>
+# Deploy all challenges
+$ make all-challenges HOST=<IP>
 
 # All Kubernetes-related tasks
 $ make linux-webserver HOST=<IP>

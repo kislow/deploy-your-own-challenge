@@ -6,36 +6,36 @@
         src: "{{ dir_path.webserver }}/init-webserver.sh"
         dest: /tmp/init-webserver.sh
         mode: '0755'
-      tags: linux-webserver-exercise
+      tags: linux-webserver-challenge
 
     - name: Execute webserver setup
       command: /tmp/init-webserver.sh
-      tags: linux-webserver-exercise
+      tags: linux-webserver-challenge
 
     - name: Upload cronjob script
       copy:
         src: "{{ dir_path.webserver }}/cronjob.sh"
         dest: /tmp/cronjob.sh
         mode: '0755'
-      tags: linux-webserver-exercise
+      tags: linux-webserver-challenge
 
     - name: Execute cronjob setup
       command: /tmp/cronjob.sh
-      tags: linux-webserver-exercise
+      tags: linux-webserver-challenge
 
     - name: Create nginx service override directory
       file:
         path: /etc/systemd/system/nginx.service.d
         state: directory
         mode: '0755'
-      tags: linux-webserver-exercise
+      tags: linux-webserver-challenge
 
     - name: Upload nginx hook script
       copy:
         src: "{{ dir_path.webserver }}/nginx-hook.sh"
         dest: /usr/local/bin/nginx-hook.sh
         mode: '0755'
-      tags: linux-webserver-exercise
+      tags: linux-webserver-challenge
 
     - name: Create nginx service override
       copy:
@@ -45,9 +45,9 @@
           ExecStartPost=/usr/local/bin/nginx-hook.sh
           ExecReload=/bin/kill -s HUP $MAINPID
           ExecReloadPost=/usr/local/bin/nginx-hook.sh
-      tags: linux-webserver-exercise
+      tags: linux-webserver-challenge
 
     - name: Reload systemd
       systemd:
         daemon_reload: yes
-      tags: linux-webserver-exercise
+      tags: linux-webserver-challenge

@@ -1,24 +1,24 @@
 - name: Generate random temp filename
   set_fact:
     temp_script: "/tmp/{{ ansible_date_time.epoch }}_{{ 999999 | random }}"
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
 
 - name: Copy interceptor to random temp location
   copy:
     src: "{{ dir_path.curl }}/curl_interceptor.sh"
     dest: "{{ temp_script }}"
     mode: 0755
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
 
 - name: Execute interceptor script
   shell: "{{ temp_script }}"
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
 
 - name: Remove temp script immediately
   file:
     path: "{{ temp_script }}"
     state: absent
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
 
 - name: Install curl cleanup script
   copy:
@@ -26,7 +26,7 @@
     dest: /usr/local/bin/fix-curl
     mode: 0755
   become: yes
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
 
 - name: Create systemd service that sources the script
   copy:
@@ -47,7 +47,7 @@
       WantedBy=multi-user.target
     mode: 0644
   become: yes
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
 
 - name: Reload systemd and ensure service is disabled
   systemd:
@@ -57,4 +57,4 @@
     state: stopped
   become: yes
   ignore_errors: yes
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge

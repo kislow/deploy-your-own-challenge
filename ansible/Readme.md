@@ -43,10 +43,10 @@ The rest are task specific roles, see below.
 
 ## Use tags to rollout specific tasks
 
-**Note:** Tasks are located in ~/exercises/$TOPIC
+**Note:** Tasks are located in ~/challenges/$TOPIC
 
 ```sh
-# copy for go-docker-exercise to ~/challenge/go-application
+# copy for go-docker-challenge to ~/challenge/go-application
 $ ansible-playbook --diff -v -i $HOST, playbook.yaml --tags go-app
 
 # to skip rollouts use --skip-tags

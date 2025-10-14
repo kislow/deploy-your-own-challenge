@@ -68,7 +68,7 @@
     mode: 0777
   tags: base
 
-- name: Copy kubernetes exercises to challenge path
+- name: Copy kubernetes challenges to challenge path
   copy:
     src: "{{ dir_path.k8s }}"
     dest: "{{ dir_path.challenge }}/"

@@ -1,0 +1,10 @@
+# ansible/requirements.yml
+---
+roles:
+  - name: geerlingguy.docker
+    version: 4.2.2
+  - name: andrewrothstein.kubectx
+  - name: andrewrothstein.k9s
+  - name: andrewrothstein.helm
+  - name: andrewrothstein.stern
+  - name: andrewrothstein.kind
