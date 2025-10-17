@@ -2,9 +2,7 @@
 ---
 roles:
   - name: geerlingguy.docker
-    version: 4.2.2
-  - name: andrewrothstein.kubectx
+    version: 7.7.0
   - name: andrewrothstein.k9s
-  - name: andrewrothstein.helm
-  - name: andrewrothstein.stern
+  - name: andrewrothstein.kubernetes-helm
   - name: andrewrothstein.kind

@@ -5,8 +5,6 @@
 - import_role:
     name:    helm
 - import_role:
-    name:    stern
-- import_role:
     name: geerlingguy.docker
 - import_role:
     name: andrewrothstein.kind
