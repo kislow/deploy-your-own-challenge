@@ -1,0 +1,12 @@
+- name: Create go app challenge dir
+  file:
+    path: "{{ dir_path.challenge }}/go-app"
+    state: directory
+  tags: go-app-challenge
+
+- name: Copy go app challenges
+  copy:
+    src: "{{ dir_path.go }}"
+    dest: "{{ dir_path.challenge }}/go-app/"
+    mode: 0777
+  tags: go-app-challenge

@@ -10,8 +10,8 @@
     - role: kind
       tags: [kind]
 
-    - role: go-docker-challenge
-      tags: [go-docker-challenge]
+    - role: go-app-challenge
+      tags: [go-app-challenge]
 
     - role: linux-curl-challenge
       tags: [linux-curl-challenge]

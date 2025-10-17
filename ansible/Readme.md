@@ -46,8 +46,8 @@ The rest are task specific roles, see below.
 **Note:** Tasks are located in ~/challenges/$TOPIC
 
 ```sh
-# copy for go-docker-challenge to ~/challenge/go-application
-$ ansible-playbook --diff -v -i $HOST, playbook.yaml --tags go-app
+# copy for go-pp-challenge to ~/challenge/go-application
+$ ansible-playbook --diff -v -i $HOST, playbook.yaml --tags go-app-challenge
 
 # to skip rollouts use --skip-tags
 $ ansible-playbook --diff -v -i $HOST, playbook.yaml --skip-tags linux-curl

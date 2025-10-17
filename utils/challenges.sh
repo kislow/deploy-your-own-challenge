@@ -40,7 +40,7 @@ run_ansible() {
 case "${1:-}" in
   base)        run_ansible "Base setup" "base" ;;
   kind)        run_ansible "Kind cluster setup" "kind" ;;
-  go-app)      run_ansible "Go App exercise" "go-docker-challenge" ;;
+  go-app)      run_ansible "Go App exercise" "go-app-challenge" ;;
   curl)        run_ansible "Linux curl exercise" "linux-curl-challenge" ;;
   webserver)   run_ansible "Linux webserver exercise" "linux-webserver-challenge" ;;
   psql)        run_ansible "PostgreSQL docker exercise" "postgres-docker-challenge" ;;

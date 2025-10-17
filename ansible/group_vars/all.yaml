@@ -1,7 +1,7 @@
 dir_path:
   kind_config: /opt/kind
   challenge: ~/challenge
-  go: "{{ playbook_dir }}/../challenges/go-application/golang"
+  go: "{{ playbook_dir }}/../challenges/golang/app"
   curl: "{{ playbook_dir }}/../challenges/linux/curl"
   webserver: "{{ playbook_dir }}/../challenges/linux/webserver"
   psql: "{{ playbook_dir }}/../challenges/postgres"
