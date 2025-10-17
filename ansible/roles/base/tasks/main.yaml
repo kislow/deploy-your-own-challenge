@@ -1,7 +1,7 @@
 - import_role:
-    name:    k9s
+    name: andrewrothstein.k9s
 - import_role:
-    name:    kubernetes-helm
+    name: andrewrothstein.kubernetes-helm
 - import_role:
     name: geerlingguy.docker
 - import_role:
