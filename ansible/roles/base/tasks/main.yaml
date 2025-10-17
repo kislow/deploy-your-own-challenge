@@ -1,9 +1,7 @@
 - import_role:
-    name:    kubectx
-- import_role:
     name:    k9s
 - import_role:
-    name:    helm
+    name:    kubernetes-helm
 - import_role:
     name: geerlingguy.docker
 - import_role:
