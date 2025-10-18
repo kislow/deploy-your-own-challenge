@@ -1,20 +1,94 @@
-🔧 TROUBLESHOOTING EXERCISE
+===============================================
+Curl Troubleshooting Challenge
+===============================================
 
-📊 Scenario:
-Your teammate deployed a Go API but reports "weird behavior"
-The API should echo the MESSAGE environment variable
+Difficulty: Intermediate
 
-🎯 Your Mission:
-1. Validate the API is working correctly
-2. Ensure responses match expectations
-3. If anything seems wrong, fix it
+SCENARIO:
+---------
+Your system suddenly started behaving strangely when using `curl`.
+Some requests fail, others hang, and others return unexpected results.
 
-📋 Investigation Steps:
-- Test the API endpoint
-- Compare with expected behavior
-- Check all system components
-- Try alternative testing methods
+Your teammate insists it’s a network problem — but something feels off.
 
-⚡ Quick Start: curl localhost:8080/
+Your mission: Investigate what’s happening, identify the root cause,
+and restore `curl` to its normal behavior.
 
-🏆 Success: API returns correct MESSAGE value consistently
+---
+
+TASKS:
+------
+
+[ ] Task 1: Baseline Testing
+    - Run a few curl commands against known endpoints:
+        ```bash
+        curl https://api.github.com
+        curl https://example.com
+        ```
+    - Observe the output carefully.
+    - Compare behavior before and after system restarts.
+
+---
+
+[ ] Task 2: System Investigation
+    - Inspect your environment for unusual configurations or overrides:
+        ```bash
+        which curl
+        type curl
+        env | grep CURL
+        ```
+    - Look for recent file changes or new scripts in common binary paths.
+    - Check system services and temporary directories.
+
+---
+
+[ ] Task 3: Root Cause Analysis
+    - Trace what happens when you run `curl`.
+    - Review logs or recent configuration changes.
+    - Identify what’s interfering with curl’s normal behavior.
+
+---
+
+[ ] Task 4: Apply the Fix
+    - Once the root cause is identified, revert or repair it.
+    - Re-run:
+        ```bash
+        curl https://api.github.com
+        curl https://example.com
+        ```
+      The command should now behave consistently.
+    - Verify that curl responses are normal and repeatable.
+
+---
+
+[ ] Task 5: Optional Hard Mode
+    - Document your reasoning and findings.
+    - Suggest how to prevent this issue in the future.
+    - Bonus: Write a small script or service that safely restores curl functionality automatically.
+
+---
+
+REQUIREMENTS:
+-------------
+- Identify the root cause of the curl malfunction.
+- Restore correct and consistent curl behavior.
+- Document your investigative process and reasoning.
+
+---
+
+DELIVERABLES:
+-------------
+1. Summary of findings and applied fix.
+2. Verification output showing working curl responses.
+3. (Optional) Preventive improvement suggestions.
+
+---
+
+🏁 SUCCESS CRITERIA:
+--------------------
+✅ curl behaves normally again
+✅ Root cause discovered and fixed
+✅ Investigation clearly documented
+
+🔥 Good luck, Engineer —
+this one tests your system awareness and investigative instincts.

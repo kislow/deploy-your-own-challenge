@@ -1,0 +1,57 @@
+# Webserver Investigation Challenge
+
+Difficulty: Intermediate
+
+SCENARIO:
+---------
+A system administrator recently claimed to have "secured" a webserver, but there are reasons to suspect the setup may be exposing unintended functionality.
+
+Your mission:
+1. Audit the Nginx webserver and related system configuration.
+2. Identify any hidden or unexpected endpoints, jobs, users, or scripts that alter the webserver behavior.
+3. Explain how the suspicious component works, where it lives, and how it can be reproduced.
+4. Restore or recommend fixes so the server no longer exposes unintended behavior.
+
+TASKS:
+------
+
+[ ] Task 1: Service discovery
+    - Determine which service is listening on port 80 and confirm Nginx is running.
+    - List active Nginx processes and unit information.
+
+[ ] Task 2: Configuration inspection
+    - Inspect Nginx site configurations under `/etc/nginx/`.
+    - Look for unexpected `location` blocks or returns that expose private content.
+    - Check site root files under `/var/www/` for suspicious pages.
+
+[ ] Task 3: System-level artefacts
+    - Inspect systemd overrides for nginx and any ExecStart/ExecStartPost hooks.
+    - Search for scripts in common locations (`/usr/local/bin`, `/tmp`) that reference nginx or manipulate configs.
+    - Review cronjobs and system cron configuration for recently added tasks.
+
+[ ] Task 4: User and logs
+    - Look for unusual user accounts or disabled users that look out of place.
+    - Check for created log directories or log files that suggest tampering.
+
+[ ] Task 5: Reproduce & Remediate
+    - Show how the hidden or insecure behavior can be triggered (minimal repro).
+    - Apply a recommended remediation or document step-by-step how to remove/neutralize the issue.
+    - Provide a brief remediation summary for the operator.
+
+REQUIREMENTS:
+-------------
+- Do NOT modify production content beyond safe read-only inspection unless you are applying a documented remediation step.
+- Provide clear evidence (commands and output) that reproduce the behavior.
+- Produce a short root-cause statement and remediation steps.
+
+DELIVERABLES:
+-------------
+1. Investigation notes (commands run + relevant outputs).
+2. Minimal reproduction steps for the suspicious behavior.
+3. Short remediation plan or applied fix and verification.
+
+SUCCESS CRITERIA:
+-----------------
+✅ Hidden or unintended webserver behavior identified
+✅ Reproducible evidence provided
+✅ Clear remediation steps or fixes documented
