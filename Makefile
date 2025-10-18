@@ -142,8 +142,8 @@ help:
 	@echo ""
 	@echo "Examples:"
 	@echo "  make setup"
-	@echo "  make deploy HOST=127.0.0.1"
-	@echo "  make quick HOST=127.0.0.1 TAGS=linux-curl-challenge"
+	@echo "  make deploy HOST=localhost"
+	@echo "  make quick HOST=localhost TAGS=linux-curl-challenge"
 	@echo "  make ec2-plan"
 
 .DEFAULT_GOAL := help

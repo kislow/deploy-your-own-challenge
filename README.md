@@ -1,6 +1,6 @@
-# 🚀 Deploy Your Own DevOps
+# 🚀 Deploy Your Own Challenge
 
-Welcome to **Deploy Your Own DevOps** a hands-on playground where you can **spin up real-world DevOps challenges**, break things, fix them, and learn the craft the right way.
+Welcome to **Deploy Your Own Challenge** a hands-on playground where you can **spin up real-world DevOps challenges**, break things, fix them, and learn the craft the right way.
 
 This repo is built for engineers who believe the best way to learn DevOps is to **deploy it yourself**, not just read about it.
 
@@ -91,7 +91,7 @@ You can deploy specific challenges, groups, or even combinations of tags.
 
 ```sh
 # Exercise deployment
-$ make <challenge> HOST=<IP>       # e.g. make linux-curl HOST=192.168.1.10 or localhost/127.0.0.1
+$ make <challenge> HOST=<IP>       # e.g. make linux-curl HOST=192.168.1.10 or HOST=localhost for local deployment
 
 #----------------------#
 # Combination targets  #
