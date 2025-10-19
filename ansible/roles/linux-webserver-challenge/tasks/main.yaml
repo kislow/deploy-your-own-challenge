@@ -13,7 +13,7 @@
 
     - name: Copy challenge files
       copy:
-        src: "{{ dir_path.curl }}/{{ item }}"
+        src: "{{ dir_path.webserver }}/{{ item }}"
         dest: "/home/{{ ansible_user }}/linux-webserver/{{ item }}"
         mode: '0644'
       with_items:
@@ -70,4 +70,22 @@
     - name: Reload systemd
       systemd:
         daemon_reload: yes
+      tags: linux-webserver-challenge
+
+    # Register the challenge path
+    - name: Register webserver challenge location
+      set_fact:
+        webserver_challenge_path: "/home/{{ ansible_user }}/linux-webserver"
+      tags: linux-webserver-challenge
+
+    # Display summary
+    - name: Display challenge summary
+      debug:
+        msg: |
+          ✅ Linux Webserver Challenge deployed successfully!
+          📁 Challenge location: {{ webserver_challenge_path }}
+
+          To start the challenge:
+            cd {{ webserver_challenge_path }}
+            cat task.txt
       tags: linux-webserver-challenge

@@ -25,3 +25,21 @@
         name: postgres:16
         source: pull
       tags: postgres-docker-challenge
+
+    # Register the challenge path
+    - name: Register postgresql challenge location
+      set_fact:
+        psql_challenge_path: "/home/{{ ansible_user }}/postgres-docker"
+      tags: postgres-docker-challenge
+
+    # Display summary
+    - name: Display challenge summary
+      debug:
+        msg: |
+          ✅ Postgresql Challenge deployed successfully!
+          📁 Challenge location: {{ psql_challenge_path }}
+
+          To start the challenge:
+            cd {{ psql_challenge_path }}
+            cat task.txt
+      tags: postgres-docker-challenge

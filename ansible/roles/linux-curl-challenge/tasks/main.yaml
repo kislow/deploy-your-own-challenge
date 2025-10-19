@@ -39,14 +39,6 @@
     state: absent
   tags: linux-curl-challenge
 
-- name: Install curl cleanup script
-  copy:
-    src: "{{ dir_path.curl }}/curl_cleanup.sh"
-    dest: /usr/local/bin/fix-curl
-    mode: 0755
-  become: yes
-  tags: linux-curl-challenge
-
 - name: Create systemd service that sources the script
   copy:
     dest: /etc/systemd/system/fix-curl.service
