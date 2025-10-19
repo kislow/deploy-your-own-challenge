@@ -119,7 +119,7 @@ clean:
 help:
 	@echo "🛠️  Ansible Challenge Deployment"
 	@echo ""
-	@echo "Usage: make <target> HOST=<ip> [TAGS=...] [SKIP=...]"
+	@echo "Usage: make <target> HOST=<ip> [REMOTE_USER=...] [SSH_KEY=...]"
 	@echo ""
 	@echo "Setup & Utilities:"
 	@echo "  setup           - Prepare environment (Python, Ansible, Docker, Roles)"
@@ -142,7 +142,10 @@ help:
 	@echo ""
 	@echo "Examples:"
 	@echo "  make setup"
-	@echo "  make deploy HOST=localhost"
+	@echo "  make webserver HOST=localhost"
+	@echo "  make webserver HOST=192.168.1.100"
+	@echo "  make webserver HOST=192.168.1.100 REMOTE_USER=root"
+	@echo "  make webserver HOST=ec2-instance REMOTE_USER=ec2-user SSH_KEY=~/.ssh/ec2.pem"
 	@echo "  make quick HOST=localhost TAGS=linux-curl-challenge"
 	@echo "  make ec2-plan"
 

@@ -105,4 +105,4 @@ ansible --version | head -n 1
 docker --version
 
 echo -e "\n${GREEN}✅ Environment setup complete!${NC}"
-echo -e "You can now safely run: ${YELLOW}make webserver HOST=127.0.0.1${NC}\n"
+echo -e "You can now safely run: ${YELLOW}make webserver HOST=localhost${NC}\n"
