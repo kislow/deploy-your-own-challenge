@@ -6,7 +6,6 @@
 *.tfplan
 .terraform/
 .terraform.lock.hcl
-terraform*
 
 # SSH keys
 .ssh/
