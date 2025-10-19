@@ -10,14 +10,14 @@
     - role: kind
       tags: [kind]
 
-    - role: go-docker-exercise
-      tags: [go-docker-exercise]
+    - role: go-app-challenge
+      tags: [go-app-challenge]
 
-    - role: linux-curl-exercise
-      tags: [linux-curl-exercise]
+    - role: linux-curl-challenge
+      tags: [linux-curl-challenge]
 
-    - role: linux-webserver-exercise
-      tags: [linux-webserver-exercise]
+    - role: linux-webserver-challenge
+      tags: [linux-webserver-challenge]
 
-    - role: postgres-docker-exercise
-      tags: [postgres-docker-exercise]
+    - role: postgres-docker-challenge
+      tags: [postgres-docker-challenge]

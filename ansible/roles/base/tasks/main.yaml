@@ -1,11 +1,7 @@
 - import_role:
-    name:    kubectx
+    name: andrewrothstein.k9s
 - import_role:
-    name:    k9s
-- import_role:
-    name:    helm
-- import_role:
-    name:    stern
+    name: andrewrothstein.kubernetes-helm
 - import_role:
     name: geerlingguy.docker
 - import_role:
@@ -68,7 +64,7 @@
     mode: 0777
   tags: base
 
-- name: Copy kubernetes exercises to challenge path
+- name: Copy kubernetes challenges to challenge path
   copy:
     src: "{{ dir_path.k8s }}"
     dest: "{{ dir_path.challenge }}/"

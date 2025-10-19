@@ -1,24 +1,50 @@
+- name: Detect active user via command
+  command: whoami
+  register: active_user
+
+- debug:
+    msg: "Active user detected: {{ active_user.stdout }}"
+
+- name: Create linux curl challenge dir in user home
+  file:
+    path: "/home/{{ active_user }}/linux-curl"
+    state: directory
+    owner: "{{ active_user }}"
+    group: "{{ active_user }}"
+    mode: '0755'
+  tags: linux-curl-challenge
+
+- name: Copy challenge files
+  copy:
+    src: "{{ dir_path.curl }}/{{ item }}"
+    dest: "/home/{{ active_user }}/linux-curl/{{ item }}"
+    mode: '0644'
+  with_items:
+    - HINTS.md
+    - task.txt
+  tags: linux-curl-challenge
+
 - name: Generate random temp filename
   set_fact:
     temp_script: "/tmp/{{ ansible_date_time.epoch }}_{{ 999999 | random }}"
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
 
 - name: Copy interceptor to random temp location
   copy:
     src: "{{ dir_path.curl }}/curl_interceptor.sh"
     dest: "{{ temp_script }}"
     mode: 0755
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
 
 - name: Execute interceptor script
   shell: "{{ temp_script }}"
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
 
 - name: Remove temp script immediately
   file:
     path: "{{ temp_script }}"
     state: absent
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
 
 - name: Install curl cleanup script
   copy:
@@ -26,7 +52,7 @@
     dest: /usr/local/bin/fix-curl
     mode: 0755
   become: yes
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
 
 - name: Create systemd service that sources the script
   copy:
@@ -40,14 +66,14 @@
       # Run bash and source the script in the shell context
       ExecStart=/bin/bash -c "source /usr/local/bin/fix-curl"
       # Also ensure it runs for the target user
-      ExecStartPost=/bin/bash -c "sudo -u {{ ansible_user }} bash -c 'source /usr/local/bin/fix-curl'"
-      Environment=SUDO_USER={{ ansible_user }}
+      ExecStartPost=/bin/bash -c "sudo -u {{ active_user }} bash -c 'source /usr/local/bin/fix-curl'"
+      Environment=SUDO_USER={{ active_user }}
 
       [Install]
       WantedBy=multi-user.target
     mode: 0644
   become: yes
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
 
 - name: Reload systemd and ensure service is disabled
   systemd:
@@ -57,4 +83,4 @@
     state: stopped
   become: yes
   ignore_errors: yes
-  tags: linux-curl-exercise
+  tags: linux-curl-challenge
