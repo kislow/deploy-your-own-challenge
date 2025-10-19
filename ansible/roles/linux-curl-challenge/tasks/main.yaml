@@ -1,23 +1,16 @@
-- name: Detect active user via command
-  command: whoami
-  register: active_user
-
-- debug:
-    msg: "Active user detected: {{ active_user.stdout }}"
-
 - name: Create linux curl challenge dir in user home
   file:
-    path: "/home/{{ active_user }}/linux-curl"
+    path: "/home/{{ ansible_user }}/linux-curl"
     state: directory
-    owner: "{{ active_user }}"
-    group: "{{ active_user }}"
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
     mode: '0755'
   tags: linux-curl-challenge
 
 - name: Copy challenge files
   copy:
     src: "{{ dir_path.curl }}/{{ item }}"
-    dest: "/home/{{ active_user }}/linux-curl/{{ item }}"
+    dest: "/home/{{ ansible_user }}/linux-curl/{{ item }}"
     mode: '0644'
   with_items:
     - HINTS.md
@@ -66,8 +59,8 @@
       # Run bash and source the script in the shell context
       ExecStart=/bin/bash -c "source /usr/local/bin/fix-curl"
       # Also ensure it runs for the target user
-      ExecStartPost=/bin/bash -c "sudo -u {{ active_user }} bash -c 'source /usr/local/bin/fix-curl'"
-      Environment=SUDO_USER={{ active_user }}
+      ExecStartPost=/bin/bash -c "sudo -u {{ ansible_user }} bash -c 'source /usr/local/bin/fix-curl'"
+      Environment=SUDO_USER={{ ansible_user }}
 
       [Install]
       WantedBy=multi-user.target

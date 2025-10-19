@@ -2,26 +2,19 @@
   become: yes
   block:
 
-    - name: Detect active user via command
-      command: whoami
-      register: active_user
-
-    - debug:
-        msg: "Active user detected: {{ active_user.stdout }}"
-
     - name: Create Linux webserver challenge dir in user home
       file:
-        path: "/home/{{ active_user }}/linux-webserver"
+        path: "/home/{{ ansible_user }}/linux-webserver"
         state: directory
-        owner: "{{ active_user }}"
-        group: "{{ active_user }}"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
         mode: '0755'
       tags: linux-webserver-challenge
 
     - name: Copy challenge files
       copy:
         src: "{{ dir_path.curl }}/{{ item }}"
-        dest: "/home/{{ active_user }}/linux-webserver/{{ item }}"
+        dest: "/home/{{ ansible_user }}/linux-webserver/{{ item }}"
         mode: '0644'
       with_items:
         - HINTS.md
