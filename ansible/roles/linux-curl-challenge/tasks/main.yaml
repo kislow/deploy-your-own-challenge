@@ -77,3 +77,21 @@
   become: yes
   ignore_errors: yes
   tags: linux-curl-challenge
+
+# Register the challenge path
+- name: Register curl challenge location
+  set_fact:
+    curl_challenge_path: "/home/{{ ansible_user }}/linux-curl"
+  tags: linux-curl-challenge
+
+# Display summary
+- name: Display challenge summary
+  debug:
+    msg: |
+      ✅ Linux Curl Challenge deployed successfully!
+      📁 Challenge location: {{ curl_challenge_path }}
+
+      To start the challenge:
+        cd {{ curl_challenge_path }}
+        cat task.txt
+  tags: linux-curl-challenge
