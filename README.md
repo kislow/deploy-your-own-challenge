@@ -7,17 +7,99 @@ This repo is built for engineers who believe the best way to learn DevOps is to 
 ## No Platforms. No Excuses.
 
 Not every challenge needs a Hackerrank sign-up or pre-built test.
-Sometimes the best exercises are **custom-built**, creative, cost-effective, and tailored to **your company’s workflows** or **internal upskilling programs**.
+Sometimes the best exercises are **custom-built**, creative, cost-effective, and tailored to **your company's workflows** or **internal upskilling programs**.
 This repo is for engineers who learn by deploying, experimenting, and thinking differently.
 
 🧩 Tips for Junior Engineers
 
 ⚠️ Hands-on first, AI second
-If you’re new to DevOps, resist the urge to copy-paste solutions from AI or forums.
+If you're new to DevOps, resist the urge to copy-paste solutions from AI or forums.
 The real learning comes from reading **official documentation**, experimenting, and troubleshooting yourself.
-AI can be a helpful assistant, but don’t let it replace understanding why something works.
+AI can be a helpful assistant, but don't let it replace understanding why something works.
 
-💡 Start small, break things, fix them, and gradually build confidence, that’s how professional DevOps engineers are made.
+💡 Start small, break things, fix them, and gradually build confidence, that's how professional DevOps engineers are made.
+
+---
+
+## 🚀 Quick Start
+
+```bash
+# 1. Clone the repo
+git clone https://github.com/kislow/deploy-your-own-challenge.git
+cd deploy-your-own-challenge
+
+# 2. Run automated setup
+make setup
+
+# 3. Deploy your first challenge
+make curl HOST=localhost
+```
+
+📖 **Need help with installation?** See the **[Installation Guide →](INSTALLATION.md)**
+
+---
+
+## 🎯 Available Challenges
+
+### 🐧 Linux Challenges
+
+#### **Linux Curl Challenge**
+**Difficulty:** Beginner
+**Tags:** `linux-curl-challenge`
+
+A mischievous script has intercepted your `curl` command! Your mission is to restore it without reinstalling packages or rebooting the system.
+
+**Skills:** Linux troubleshooting, command interception, PATH manipulation, shell aliases
+
+```bash
+make curl HOST=localhost
+```
+
+---
+
+#### **Linux Webserver Challenge**
+**Difficulty:** Beginner
+**Tags:** `linux-webserver-challenge`
+
+Deploy a simple static website using a lightweight web server. Learn the fundamentals of web hosting, process management, and basic HTTP serving.
+
+**Skills:** Web servers (nginx/apache), file permissions, port binding, service management
+
+```bash
+make webserver HOST=localhost
+```
+
+---
+
+### 🐳 Docker Challenges
+
+#### **PostgreSQL Docker Challenge**
+**Difficulty:** Intermediate
+**Tags:** `postgres-docker-challenge`
+
+Deploy and manage a PostgreSQL database in Docker. Learn container orchestration, volume management, and database persistence.
+
+**Skills:** Docker, PostgreSQL, volume management, container networking
+
+```bash
+make psql HOST=localhost
+```
+
+---
+
+### 🔧 Application Challenges
+
+#### **Go App Challenge**
+**Difficulty:** Intermediate
+**Tags:** `go-app-challenge`
+
+Build and deploy a Go application. Understand compilation, binary execution, and application deployment patterns.
+
+**Skills:** Go development, application deployment, process management
+
+```bash
+make go-app HOST=localhost
+```
 
 ---
 
@@ -26,61 +108,11 @@ AI can be a helpful assistant, but don’t let it replace understanding why some
 Each challenge folder contains:
 
 - **Scenario:** a real-world DevOps problem or setup to tackle
-- **Setup:** Docker Compose or Kubernetes manifests to spin up the environment
+- **Setup:** Automated deployment via Ansible
 - **Objective:** clear learning goals and success criteria
-- **Hints (optional):** small nudges if you get stuck
+- **Hints (optional):** small nudges if you get stuck (HINTS.md)
 
 💡 *Think of it as a lab manual meets production chaos.*
-
----
-
-### ⚙️ Ansible Prerequisites
-
-1. **Python**
-
-   * Ansible requires Python **3.8+** on the **control machine** (where you run Ansible).
-
-2. **SSH Access**
-
-   * Ansible communicates over SSH to your managed nodes (VMs, containers, or remote servers).
-   * You need:
-
-     * **remote_user** → the user Ansible will log in as on the target host (e.g., `ubuntu` or `admin`).
-     * **private_key_file** → the SSH private key to authenticate the remote user (no password needed).
-   * In `ansible.cfg` or inventory:
-
-     ```ini
-     [defaults]
-     remote_user = ubuntu
-     private_key_file = /path/to/private_key.pem
-     ```
-
-   ✅ *This is required for all VM-based challenges. For local Docker or Kind clusters, this may not be necessary if Ansible runs locally.*
-
----
-
-
-## ⚙️ Getting Started
-
-### 1. Clone the repository
-
-```bash
-git clone https://github.com/kislow/deploy-your-own-devops.git
-cd deploy-your-own-devops
-````
-
-### 2. Spin up a VM or local environment
-
-It’s **strongly recommended** to run these challenges in a **clean VM** or **sandboxed environment** especially when testing networking, volumes, or security scenarios.
-
-* 🐳 **Docker-based challenges**: can be run locally on your machine (Docker Desktop or CLI).
-* 🧠 **Linux-based challenges**: work best on a lightweight VM (tested on Ubuntu and Debian).
-* ☸️ **Kubernetes challenges**: use Kind (Kubernetes in Docker), so you can run clusters directly inside Docker — no separate VM required.
-* Alternatively, you can spin up:
-
-  * **Azure:** you may use `Standard_B2s`
-  * **AWS:** you may use `t3.medium`
-  * **Local:** use Multipass, Vagrant, or Docker Desktop with a Linux container backend
 
 ---
 
@@ -89,46 +121,104 @@ It’s **strongly recommended** to run these challenges in a **clean VM** or **s
 Each challenge comes with a Makefile to simplify deployment and tear-downs.
 You can deploy specific challenges, groups, or even combinations of tags.
 
-```sh
-# Exercise deployment
-$ make <challenge> HOST=<IP>       # e.g. make linux-curl HOST=192.168.1.10 or HOST=localhost for local deployment
+### Individual Challenges
 
-#----------------------#
-# Combination targets  #
-#----------------------#
+```bash
+# Deploy to localhost (no SSH required)
+make curl HOST=localhost
+make webserver HOST=localhost
+make go-app HOST=localhost
+make psql HOST=localhost
 
-# Deploy all challenges
-$ make all-challenges HOST=<IP>
+# Deploy to remote VM
+make curl HOST=192.168.1.100
+make webserver HOST=192.168.1.100
 
-# All Kubernetes-related tasks
-$ make linux-webserver HOST=<IP>
-
-#----------------------#
-# Flexible deployments #
-#----------------------#
-
-# Deploy specific tags
-$ make quick HOST=<IP> TAGS=docker,postgres
-
-# Deploy all except specific challenge(s)
-$ make deploy-except HOST=<IP> SKIP=postgres
-
-#------------------------#
-# Built-in documentation #
-#------------------------#
-
-$ make help
-$ make list-tags
-
-#------------------------#
-# Safety Feature         #
-#------------------------#
-
-# Perform a dry run (no changes)
-$ make dry-run HOST=<IP>
+# Deploy with custom SSH credentials
+make curl HOST=ec2-instance REMOTE_USER=ec2-user SSH_KEY=~/.ssh/ec2.pem
 ```
 
-🧠 *All commands assume passwordless SSH or pre-configured access to your target host.*
+### Combination Deployments
+
+```bash
+# Deploy all challenges
+make all-challenges HOST=localhost
+
+# Deploy infrastructure only (base setup + Kind cluster)
+make infra HOST=localhost
+
+# Full deployment (everything)
+make deploy HOST=localhost
+```
+
+### Flexible Deployments
+
+```bash
+# Deploy specific tags
+make quick HOST=localhost TAGS=linux-curl-challenge,linux-webserver-challenge
+
+# Deploy all except specific challenge(s)
+make deploy-except HOST=localhost SKIP=postgres-docker-challenge
+```
+
+### Built-in Documentation
+
+```bash
+# Show all available commands
+make help
+
+# List all challenge tags
+make list-tags
+
+# Test connection before deployment
+make test-connection HOST=localhost
+```
+
+### Safety Features
+
+```bash
+# Perform a dry run (no changes)
+make dry-run HOST=localhost
+
+# Dry run for specific tags
+make dry-run-tag HOST=localhost TAGS=linux-curl-challenge
+```
+
+🧠 *All commands automatically detect localhost vs remote and configure the connection accordingly.*
+
+---
+
+## 🎓 Learning Path
+
+**Recommended order for beginners:**
+
+1. **Linux Curl** → Master basic Linux troubleshooting
+2. **Linux Webserver** → Learn web server fundamentals
+3. **PostgreSQL Docker** → Understand containerization
+4. **Go App** → Deploy real applications
+
+Each challenge builds on concepts from previous ones!
+
+---
+
+## ⚙️ Requirements
+
+### For Local Deployment (localhost)
+
+- Python 3.8+
+- Ansible 2.9+
+- Sudo access
+- Docker (for Docker-based challenges)
+
+All automatically installed via `make setup`
+
+### For Remote Deployment
+
+Everything above, plus:
+- SSH access to target host
+- SSH key authentication configured
+
+📖 **Full installation instructions:** [INSTALLATION.md](INSTALLATION.md)
 
 ---
 
@@ -148,8 +238,6 @@ If you have ideas for new challenges or improvements, feel free to open a **Pull
 
 ## 🌐 Connect
 
-Tag your setups, screenshots, or notes with **#DeployYourOwnDevOps** on social, let’s grow a community that learns by deploying.
+Tag your setups, screenshots, or notes with **#DeployYourOwnDevOps** on social, let's grow a community that learns by deploying.
 
-> “You don’t learn DevOps by watching you learn it by deploying.”
-
----
+> "You don't learn DevOps by watching you learn it by deploying."
