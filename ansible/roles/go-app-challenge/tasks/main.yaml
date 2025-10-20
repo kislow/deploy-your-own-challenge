@@ -1,30 +1,37 @@
-- name: Create go app challenge dir
-  file:
-    path: "{{ dir_path.challenge }}/go-app"
-    state: directory
-  tags: go-app-challenge
+- name: Setup go app challenge
+  become: yes
+  block:
 
-- name: Copy go app challenges
-  copy:
-    src: "{{ dir_path.go }}"
-    dest: "{{ dir_path.challenge }}/go-app/"
-    mode: 0777
-  tags: go-app-challenge
+    - name: Create go app challenge dir in user home
+      file:
+        path: "/home/{{ ansible_user }}/go-app"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+      tags: go-app-challenge
 
-# Register the challenge path
-- name: Go App challenge location
-  set_fact:
-    go_challenge_path: "/home/{{ ansible_user }}/go-app"
-  tags: go-app-challenge
+    - name: Copy go app challenges
+      copy:
+        src: "{{ dir_path.go }}"
+        dest: "{{ dir_path.challenge }}/go-app/"
+        mode: 0777
+      tags: go-app-challenge
 
-# Display summary
-- name: Display challenge summary
-  debug:
-    msg: |
-      ✅ Go App Challenge deployed successfully!
-      📁 Challenge location: {{ go_challenge_path }}
+    # Register the challenge path
+    - name: Go App challenge location
+      set_fact:
+        go_challenge_path: "/home/{{ ansible_user }}/go-app"
+      tags: go-app-challenge
 
-      To start the challenge:
-        cd {{ go_challenge_path }}
-        cat task.txt
-  tags: go-app-challenge
+    # Display summary
+    - name: Display challenge summary
+      debug:
+        msg: |
+          ✅ Go App Challenge deployed successfully!
+          📁 Challenge location: {{ go_challenge_path }}
+
+          To start the challenge:
+            cd {{ go_challenge_path }}
+            cat task.txt
+      tags: go-app-challenge
