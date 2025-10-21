@@ -401,7 +401,7 @@ If you encounter issues not covered here:
 1. **Check logs:** Ansible provides detailed output during deployment
 2. **Run dry-run:** `make dry-run HOST=<target>` to see what would change
 3. **Test connection:** `make test-connection HOST=<target>` to verify SSH access
-4. **Open an issue:** [GitHub Issues](https://github.com/kislow/deploy-your-own-devops/issues)
+4. **Open an issue:** [GitHub Issues](https://github.com/kislow/deploy-your-own-challenge/issues)
 
 ---
 

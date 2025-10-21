@@ -125,7 +125,7 @@ Each challenge folder contains:
 
 ## 🚢 Deployments
 
-Each challenge comes with a Makefile to simplify deployment and tear-downs.
+There is a Makefile to simplify deployment and tear-downs (WIP).
 You can deploy specific challenges, groups, or even combinations of tags.
 
 ### Individual Challenges
@@ -231,7 +231,7 @@ Everything above, plus:
 
 ## 💬 Feedback & Contributions
 
-We take feedback seriously, each challenge evolves based on real-world input.
+We value feedback, each challenge evolves based on real-world input.
 If you have ideas for new challenges or improvements, feel free to open a **Pull Request** or **Issue**.
 
 ---
@@ -245,6 +245,6 @@ If you have ideas for new challenges or improvements, feel free to open a **Pull
 
 ## 🌐 Connect
 
-Tag your setups, screenshots, or notes with **#DeployYourOwnDevOps** on social, let's grow a community that learns by deploying.
+Tag your setups, screenshots, or notes with **#DeployYourOwnChallenge** on social, let's grow a community that learns by deploying.
 
 > "You don't learn DevOps by watching you learn it by deploying."
