@@ -6,7 +6,7 @@
   block:
     - name: Create postgres-docker challenge dir in user home
       file:
-        path: "/home/{{ ansible_user }}/postgres-docker"
+        path: "/home/{{ ansible_user }}/challenge/postgres-docker"
         state: directory
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
@@ -16,7 +16,7 @@
     - name: Copy postgrs docker challenge
       copy:
         src: "{{ dir_path.psql }}/docker-db/"
-        dest: "/home/{{ ansible_user }}/postgres-docker"
+        dest: "/home/{{ ansible_user }}/challenge/postgres-docker"
         mode: '0644'
       tags: postgres-docker-challenge
 

@@ -21,7 +21,7 @@ This guide covers everything you need to get started deploying DevOps challenges
 
 ### System Requirements
 
-- **Operating System:** Ubuntu 20.04+, Debian 11+, or macOS
+- **Operating System:** Ubuntu 22.04+, Debian 11+, or macOS
 - **Memory:** 2GB minimum, 4GB recommended for Kubernetes challenges
 - **Disk Space:** 10GB free space
 - **Architecture:** x86_64 (amd64) or ARM64

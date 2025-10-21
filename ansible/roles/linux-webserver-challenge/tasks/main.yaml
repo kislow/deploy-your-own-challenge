@@ -4,7 +4,7 @@
 
     - name: Create Linux webserver challenge dir in user home
       file:
-        path: "/home/{{ ansible_user }}/linux-webserver"
+        path: "/home/{{ ansible_user }}/challenge/linux-webserver"
         state: directory
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
@@ -14,7 +14,7 @@
     - name: Copy challenge files
       copy:
         src: "{{ dir_path.webserver }}/{{ item }}"
-        dest: "/home/{{ ansible_user }}/linux-webserver/{{ item }}"
+        dest: "/home/{{ ansible_user }}/challenge/linux-webserver/{{ item }}"
         mode: '0644'
       with_items:
         - HINTS.md
@@ -75,7 +75,7 @@
     # Register the challenge path
     - name: Register webserver challenge location
       set_fact:
-        webserver_challenge_path: "/home/{{ ansible_user }}/linux-webserver"
+        webserver_challenge_path: "/home/{{ ansible_user }}/challenge/linux-webserver"
       tags: linux-webserver-challenge
 
     # Display summary
