@@ -4,7 +4,7 @@
 
     - name: Create go app challenge dir in user home
       file:
-        path: "/home/{{ ansible_user }}/go-app"
+        path: "/home/{{ ansible_user }}/challenge/go-app"
         state: directory
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
@@ -14,8 +14,8 @@
     - name: Copy go app challenges
       copy:
         src: "{{ dir_path.go }}"
-        dest: "{{ dir_path.challenge }}/go-app/"
-        mode: 0777
+        dest: "/home/{{ ansible_user }}/challenge/go-app"
+        mode: '0644'
       tags: go-app-challenge
 
     # Register the challenge path

@@ -13,7 +13,7 @@
         mode: '0755'
       tags: postgres-docker-challenge
 
-    - name: Copy exercise files
+    - name: Copy postgrs docker challenge
       copy:
         src: "{{ dir_path.psql }}/docker-db/"
         dest: "/home/{{ ansible_user }}/postgres-docker"
