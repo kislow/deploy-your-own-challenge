@@ -23,6 +23,13 @@ AI can be a helpful assistant, but don't let it replace understanding why someth
 
 ## 🚀 Quick Start
 
+⚠️ IMPORTANT NOTICE
+
+I strongly advise **against** running or deploying these challenges on your local machine.
+They may contain configurations, scripts, or network behaviors that could interfere with your system environment.
+
+Always use a virtual machine (VM), [Killercoda](https://killercoda.com/playgrounds/scenario/ubuntu), or another isolated sandbox environment for testing and deployment!!!
+
 ```bash
 # 1. Clone the repo
 git clone https://github.com/kislow/deploy-your-own-challenge.git
@@ -131,8 +138,8 @@ make go-app HOST=localhost
 make psql HOST=localhost
 
 # Deploy to remote VM
-make curl HOST=192.168.1.100
-make webserver HOST=192.168.1.100
+make curl HOST=198.168.1.100
+make webserver HOST=198.168.1.100
 
 # Deploy with custom SSH credentials
 make curl HOST=ec2-instance REMOTE_USER=ec2-user SSH_KEY=~/.ssh/ec2.pem

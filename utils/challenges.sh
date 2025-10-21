@@ -26,7 +26,7 @@ fi
 
 # Set dynamic SSH connection parameters with defaults
 export ANSIBLE_REMOTE_USER="${REMOTE_USER:-ubuntu}"
-export ANSIBLE_PRIVATE_KEY="${SSH_KEY:-~/.ssh/id_rsa}"
+export ANSIBLE_PRIVATE_KEY_FILE="${SSH_KEY:-~/.ssh/id_rsa}"
 
 # Auto-detect localhost
 if [[ "$HOST" == "localhost" ]] || [[ "$HOST" == "127.0.0.1" ]]; then

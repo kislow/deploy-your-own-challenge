@@ -80,9 +80,7 @@ resource "aws_instance" "docker_host" {
     encrypted   = true
   }
 
-  user_data = base64encode(templatefile("${path.module}/user_data.sh", {
-    project_name = var.project_name
-  }))
+  user_data = file("${path.module}/user_data.sh")
 
   tags = {
     Name        = "${var.project_name}-instance"
