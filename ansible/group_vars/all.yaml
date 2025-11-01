@@ -5,6 +5,7 @@ dir_path:
   curl: "{{ playbook_dir }}/../challenges/linux/curl"
   webserver: "{{ playbook_dir }}/../challenges/linux/webserver"
   psql: "{{ playbook_dir }}/../challenges/postgres"
+  mongo: "{{ playbook_dir }}/../challenges/mongo-backup"
   rootpw_file: /root/rootpw
 
 pub_keys:

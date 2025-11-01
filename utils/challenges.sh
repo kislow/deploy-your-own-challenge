@@ -56,6 +56,7 @@ case "${1:-}" in
   curl)        run_ansible "Linux curl exercise" "linux-curl-challenge" ;;
   webserver)   run_ansible "Linux webserver exercise" "linux-webserver-challenge" ;;
   psql)        run_ansible "PostgreSQL docker exercise" "postgres-docker-challenge" ;;
+  mongo)       run_ansible "MongoDb backup & disaster recovery exercise" "mongodb-backup-challenge" ;;
   ssh-keys)    run_ansible "Add SSH public keys" "ssh-keys" ;;
   deploy)      run_ansible "Full deployment" "" ;;
   *)

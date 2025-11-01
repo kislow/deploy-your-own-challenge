@@ -21,3 +21,6 @@
 
     - role: postgres-docker-challenge
       tags: [postgres-docker-challenge]
+
+    - role: mongodb-backup-challenge
+      tags: [mongodb-backup-challenge]

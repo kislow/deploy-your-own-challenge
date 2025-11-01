@@ -1,0 +1,271 @@
+===============================================
+MongoDB Production Backup & Restore Challenge
+===============================================
+Difficulty: Intermediate
+
+SCENARIO:
+---------
+Your company's MongoDB database has been running without proper backups. Last week,
+a developer accidentally dropped the production database during a late-night debug
+session. Luckily, someone had a manual backup from 3 days ago, but the company lost
+72 hours of customer data.
+
+Management is furious. The CTO just handed you this ticket:
+"Implement automated backups with verification. If this happens again, we need to
+restore in minutes, not hours. Make it bulletproof."
+
+Your mission: Build an automated backup solution that can save the
+company when disaster strikes.
+
+ENVIRONMENT:
+-----------
+✓ MongoDB is already installed and secured (authentication enabled)
+✓ Sample production data loaded: 150 customers, 200 orders
+✓ Credentials provided in: ~/.mongo_credentials
+
+TASKS:
+------
+[ ] Task 1: Understand the Current State
+    - Source the credentials file: source ~/mongo-challenge/.mongo_credentials
+    - Connect to MongoDB and verify authentication works
+    - Explore the production_db database (customers and orders collections)
+    - Document: How many customers? How many orders? What data types exist?
+    - Write down at least 3 sample customer_ids and order_ids for later verification
+
+[ ] Task 2: Create Backup Script
+    - Create: /opt/mongo-backup/scripts/backup.sh
+    - Backup location: /opt/mongo-backup/backups/YYYY-MM-DD_HH-MM-SS/
+    - Log all operations to: /opt/mongo-backup/logs/backup.log
+    - Compress backups automatically (gzip)
+    - Handle credentials securely (NO hardcoded passwords!)
+    - Use mongodump to create timestamped backups
+    - Test: Run the script manually and verify backup is created
+
+    Requirements:
+    - Script must be executable
+    - Backup must include timestamp in directory name
+    - Must backup only the production_db database
+    - Log file must show: timestamp, backup size
+
+[ ] Task 3: Automate with Cron
+    - Set up daily backup at 2:00 AM using cron
+    - Verify cron job is registered: crontab -l
+    - Test: Temporarily change cron time to run in 1 or 2 minutes (to test cron works)
+    - Verify backup runs automatically and check logs
+    - Change back to 2:00 AM schedule
+
+    Deliverable: Working cron entry that runs backup.sh daily
+
+[ ] Task 4: ⚠️  DISASTER SIMULATION ⚠️
+    THIS IS THE CRITICAL MOMENT:
+
+    - Record the current counts (150 customers, 200 orders)
+    - Verify backup exists and note the timestamp
+    - Take a deep breath...
+    - Run: ~/mongo-challenge/scripts/simulate_disaster.sh
+    - Follow the prompts (yes, you have to type the confirmation)
+    - Watch as your database is DESTROYED
+    - Double check production_db is GONE
+    - Note the time: This is when the disaster happened!!!!
+
+    🔥 Your database is now completely empty! 🔥
+
+[ ] Task 5: Restore & Recover
+    TIME TO BE THE HERO:
+
+    - Use mongorestore to restore from backup
+    - verify data is back
+    - Compare counts with your notes from before disaster
+
+
+[ ] Optional: Task 6: Implement Backup Retention Policy
+    - Modify backup.sh to automatically clean up old backups
+    - Keep only the last 7 days of backups
+    - Test: Create multiple "old" backup directories with past dates
+    - Run backup script and verify old ones are deleted
+    - Ensure current backup is never deleted
+
+    Hint: Use find command with -mtime or compare timestamps
+
+
+==================================================================
+🎯 MongoDB Production Backup & Restore Mission Accomplished 🎯
+==================================================================
+
+
+ADVANCED - BONUS CHALLENGES (Optional):
+----------------------------------------
+
+[ ] Bonus 1: Create Restore Script & Recover
+    TIME TO BE THE HERO:
+
+    - Create: /opt/mongo-backup/scripts/restore.sh
+    - Script should accept backup timestamp as parameter
+    - If no parameter given, list available backups
+    - Prompt for confirmation before restoring
+    - Use mongorestore to restore from backup
+    - Log all restore operations
+    - Include safety checks (verify backup exists first)
+
+    - NOW: Use your restore script to recover the database
+    - Run check_mongo.sh to verify data is back
+    - Compare counts with your notes from before disaster
+    - Document your Recovery Time (how many minutes to restore?)
+
+    Success criteria:
+    - All customers restored (should be 150)
+    - All orders restored (should be 200)
+    - Sample customer_ids and order_ids you noted earlier exist
+    - Database is fully functional
+
+[ ] Bonus 2: Create Backup Verification Script
+    - Create: /opt/mongo-backup/scripts/verify.sh
+    - Check if today's backup exists
+    - Verify backup directory is not empty
+    - Check backup file integrity (files not corrupted)
+    - Test mongorestore in dry-run mode (don't actually restore)
+    - Report backup size and estimated document count
+    - Exit with proper status codes (0 = success, 1 = failure)
+
+    Test scenarios:
+    - Run after successful backup (should pass)
+    - Delete today's backup and run (should fail gracefully)
+    - Corrupt a backup file and test detection
+
+    Add to cron: Run verify.sh 30 minutes after backup job
+
+[ ] Bonus 3: Production Hardening
+    - Review all scripts for security issues
+    - Set proper file permissions:
+      * Scripts: 755 (readable and executable)
+      * Credentials: 600 (owner read/write only)
+      * Backup directories: 755
+      * Log files: 644
+    - Test: Can another user read your credentials? (they shouldn't!)
+    - Add disk space check to backup.sh (warn if <10GB free)
+    - Test all error scenarios:
+      * What if MongoDB is down during backup?
+      * What if backup directory is not writable?
+      * What if disk is full?
+
+    Each script should handle errors gracefully and log them
+
+[ ] Bonus 4: Documentation & Knowledge Transfer
+    - Create: /opt/mongo-backup/README.md
+    - Document the complete backup and restore process
+    - Include: How to restore from backup (step-by-step)
+    - Include: How to verify backups are working
+    - Include: Troubleshooting common issues
+    - Include: Recovery Time Objective (RTO) from your testing
+
+    Write it so another sysadmin could restore the database at 3 AM
+    without calling you!
+
+[ ] Bonus 5: Validation - The Ultimate Test
+    PROVE YOUR SOLUTION WORKS:
+
+    - Stop your backup cron job temporarily
+    - Delete ALL existing backups
+    - Run backup.sh manually - verify it works
+    - Re-enable cron job
+    - Run verify.sh - should pass
+    - Simulate disaster again (drop the database)
+    - Restore using your documented procedure
+    - Time the entire recovery process
+    - Verify 100% data integrity
+
+    Success = Database restored perfectly in under 5 minutes
+
+[ ] Bonus 6: Backup Encryption
+    - Add GPG encryption to backups
+    - Decrypt during restore process
+    - Store encryption key securely
+
+[ ] Bonus 7: Remote Backup Copy
+    - Copy backups to a remote server using rsync or scp
+    - Simulate: What if the entire server dies?
+    - Test restore from remote backup on a different server
+
+[ ] Bonus 8: Monitoring Dashboard
+    - Create a simple script to show backup health status
+    - Display: Last backup time, size, success/failure
+    - Add to system monitoring (like motd)
+
+REQUIREMENTS CHECKLIST:
+-----------------------
+Before submitting, verify:
+✓ MongoDB has authentication enabled
+✓ Backup script runs without errors
+✓ Backups are compressed (gzip)
+✓ Backup retention policy enforced (7 days)
+✓ Cron job configured and tested
+✓ Restore script works perfectly
+✓ Verification script detects issues
+✓ All credentials stored securely (600 permissions)
+✓ All operations logged with timestamps
+✓ Error handling in all scripts
+✓ Documentation complete and clear
+✓ Disaster simulation + recovery successful
+✓ Recovery completed in under 10 minutes
+
+DELIVERABLES:
+-------------
+1. /opt/mongo-backup/scripts/backup.sh (working, tested)
+2. /opt/mongo-backup/scripts/restore.sh (working, tested)
+3. /opt/mongo-backup/scripts/verify.sh (working, tested)
+4. Cron job configured (crontab -l output)
+5. /opt/mongo-backup/README.md (complete documentation)
+6. /opt/mongo-backup/logs/backup.log (showing successful backups)
+7. Proof of disaster recovery (screenshot or log of successful restore)
+8. Postmortem
+
+EVALUATION CRITERIA:
+-------------------
+Your solution will be evaluated on:
+
+**Functionality (40%)**
+- Backup script works reliably
+- Restore script recovers data completely
+- Automation works without manual intervention
+- All edge cases handled
+
+**Security (20%)**
+- Credentials properly secured
+- File permissions correctly set
+- No passwords in scripts or logs
+- Backup files protected
+
+**Reliability (20%)**
+- Error handling in all scripts
+- Logging is comprehensive
+- Verification catches issues
+- Recovery process is repeatable
+
+**Documentation (20%)**
+- README is clear and complete
+- Another person could restore using your docs
+- Recovery procedures are step-by-step
+- Troubleshooting guidance included
+
+SUCCESS STORY:
+-------------
+Imagine: It's 3 AM. The database is gone. You're not around.
+Can someone else restore it using only your documentation?
+
+If YES = You've succeeded! 🎉
+If NO = Keep improving until they can!
+
+REAL-WORLD REFLECTION:
+---------------------
+After completing this challenge, you should be able to answer:
+- What's your RPO (Recovery Point Objective)? How much data could you lose?
+- What's your RTO (Recovery Time Objective)? How fast can you recover?
+- How would you scale this for a 500GB database?
+- What would break if MongoDB were on a replica set?
+- How would you test backups regularly without disrupting production?
+- What happens if the backup server itself fails?
+
+Remember: The best backup strategy is the one that actually works when you need it.
+Test your backups. Document your procedures. Sleep better at night.
+
+Good luck! 🚀
