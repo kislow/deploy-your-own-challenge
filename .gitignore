@@ -26,3 +26,11 @@ Thumbs.db
 .env
 *.tfvars
 !terraform.tfvars.example
+
+# ignore locally pulled ansible files
+ansible/roles/andrewrothstein.k9s/
+ansible/roles/andrewrothstein.kind/
+ansible/roles/andrewrothstein.kubernetes-helm/
+ansible/roles/andrewrothstein.unarchive-deps/
+ansible/roles/andrewrothstein.unarchivedeps/
+ansible/roles/geerlingguy.docker/
