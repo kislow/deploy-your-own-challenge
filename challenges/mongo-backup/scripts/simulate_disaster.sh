@@ -28,6 +28,8 @@ if [ -f "$HOME/mongo-challenge/.mongo_credentials" ]; then
     source "$HOME/mongo-challenge/.mongo_credentials"
 elif [ -f ".mongo_credentials" ]; then
     source ".mongo_credentials"
+elif [ -f "../.mongo_credentials" ]; then
+    source "../.mongo_credentials"
 else
     echo -e "${RED}ERROR: Cannot find .mongo_credentials file${NC}"
     echo "Please ensure you're in the mongo-challenge directory or credentials exist in home directory"
@@ -43,14 +45,19 @@ if ! mongosh -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationD
 fi
 
 # Ensure admin has sufficient privileges for the simulation
-mongosh -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --quiet --eval "db.grantRolesToUser('admin', [{ role: 'root', db: 'admin' }])"
+mongosh admin -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --quiet --eval "
+try {
+  db.grantRolesToUser('$MONGO_ADMIN_USER', [{ role: 'root', db: 'admin' }]);
+} catch(e) {
+  // Ignore if role already exists
+}
+" 2>/dev/null || true
 
 echo -e "${YELLOW}"
 echo "Current database status:"
-mongosh -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --quiet --eval "
-use production_db
-print('Customers: ' + db.customers.countDocuments())
-print('Orders: ' + db.orders.countDocuments())
+mongosh production_db -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --quiet --eval "
+print('Customers: ' + db.customers.countDocuments());
+print('Orders: ' + db.orders.countDocuments());
 "
 echo -e "${NC}"
 
@@ -78,26 +85,23 @@ echo ""
 sleep 2
 
 echo "⚠️  Dropping 'customers' collection..."
-mongosh -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --quiet --eval "
-use production_db
-db.customers.drop()
-print('✓ customers collection dropped')
+mongosh production_db -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --quiet --eval "
+db.customers.drop();
+print('✓ customers collection dropped');
 "
 sleep 1
 
 echo "⚠️  Dropping 'orders' collection..."
-mongosh -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --quiet --eval "
-use production_db
-db.orders.drop()
-print('✓ orders collection dropped')
+mongosh production_db -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --quiet --eval "
+db.orders.drop();
+print('✓ orders collection dropped');
 "
 sleep 1
 
 echo "⚠️  Dropping 'production_db' database..."
-mongosh -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --quiet --eval "
-use production_db
-db.dropDatabase()
-print('✓ production_db database dropped')
+mongosh production_db -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --quiet --eval "
+db.dropDatabase();
+print('✓ production_db database dropped');
 "
 
 echo ""
@@ -116,11 +120,10 @@ echo -e "${NC}"
 
 echo ""
 echo "Verifying the damage..."
-mongosh -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --quiet --eval "
-use production_db
-print('Customers: ' + db.customers.countDocuments() + ' (should be 0)')
-print('Orders: ' + db.orders.countDocuments() + ' (should be 0)')
-" || echo "Database does not exist anymore!"
+mongosh production_db -u "$MONGO_ADMIN_USER" -p "$MONGO_ADMIN_PASSWORD" --authenticationDatabase admin --quiet --eval "
+print('Customers: ' + db.customers.countDocuments() + ' (should be 0)');
+print('Orders: ' + db.orders.countDocuments() + ' (should be 0)');
+" 2>/dev/null || echo -e "${RED}Database does not exist anymore!${NC}"
 
 echo ""
 echo -e "${YELLOW}What to do now:${NC}"
