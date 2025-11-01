@@ -19,18 +19,21 @@
         update_cache: yes
       tags: mongodb-backup-challenge
 
-    - name: Import MongoDB GPG key
-      shell: |
-        curl -fsSL https://www.mongodb.org/static/pgp/server-{{ mongo_version }}.asc | \
-        gpg -o /usr/share/keyrings/mongodb-server-{{ mongo_version }}.gpg --dearmor
-      args:
-        creates: /usr/share/keyrings/mongodb-server-{{ mongo_version }}.gpg
-
-    - name: Add MongoDB repository
-      apt_repository:
-        repo: "deb [ arch=amd64,arm64 signed-by=/usr/share/keyrings/mongodb-server-{{ mongo_version }}.gpg ] https://repo.mongodb.org/apt/ubuntu {{ ansible_distribution_release }}/mongodb-org/{{ mongo_version }} multiverse"
+    - name: Install libssl1.1 dependency
+      apt:
+        deb: http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2_amd64.deb
         state: present
-        filename: mongodb-org-{{ mongo_version }}
+
+    - name: Import MongoDB GPG key
+      apt_key:
+        url: https://pgp.mongodb.com/server-7.0.asc
+        state: present
+
+    - name: Add MongoDB repository (focal for noble)
+      apt_repository:
+        repo: "deb [ arch=amd64,arm64 ] https://repo.mongodb.org/apt/ubuntu focal/mongodb-org/7.0 multiverse"
+        state: present
+        filename: mongodb-org-7.0
 
     - name: Install MongoDB
       apt:
@@ -50,22 +53,48 @@
     - name: Wait for MongoDB to be ready
       wait_for:
         port: 27017
-        delay: 3
-        timeout: 30
+        delay: 5
+        timeout: 60
+      retries: 3
+      delay: 10
 
     - name: Check if admin user already exists
       shell: |
-        mongosh --quiet --eval "db.adminCommand('listUsers').users.find(u => u.user === '{{ mongo_admin_user }}') ? 'exists' : 'not_exists'" admin
-      register: admin_check
+        mongosh admin -u "{{ mongo_admin_user }}" -p "{{ mongo_admin_password }}" --authenticationDatabase admin --eval "db.getUser('{{ mongo_admin_user }}')" --quiet 2>/dev/null
+      register: user_exists_check
       changed_when: false
       failed_when: false
+      tags: mongodb-backup-challenge
 
-    - name: Create MongoDB admin user (before enabling auth)
+    - name: Create MongoDB admin user (without authentication)
       shell: |
-        mongosh admin --eval 'db.createUser({user: "{{ mongo_admin_user }}", pwd: "{{ mongo_admin_password }}", roles: [{role: "userAdminAnyDatabase", db: "admin"}, "readWriteAnyDatabase"]})'
-      when: admin_check.rc != 0 or 'not_exists' in admin_check.stdout
+        mongosh admin --eval "
+          try {
+            db.createUser({
+              user: '{{ mongo_admin_user }}',
+              pwd: '{{ mongo_admin_password }}',
+              roles: [
+                {role: 'userAdminAnyDatabase', db: 'admin'},
+                'readWriteAnyDatabase'
+              ]
+            });
+            print('User created successfully');
+          } catch (e) {
+            if (e.codeName === 'UserAlreadyExists' || e.message.includes('already exists')) {
+              print('User already exists');
+            } else {
+              throw e;
+            }
+          }
+        "
       register: user_creation
-      failed_when: user_creation.rc != 0 and 'already exists' not in user_creation.stderr
+      changed_when: "'User created successfully' in user_creation.stdout"
+      failed_when:
+        - user_creation.rc != 0
+        - "'User already exists' not in user_creation.stdout"
+        - "'requires authentication' not in user_creation.stderr"
+      when: user_exists_check.rc != 0
+      tags: mongodb-backup-challenge
 
     - name: Check if authentication is already enabled
       shell: |
@@ -107,8 +136,15 @@
     - name: Wait for MongoDB to be ready after restart
       wait_for:
         port: 27017
-        delay: 3
-        timeout: 30
+        delay: 5
+        timeout: 60
+
+    - name: Verify MongoDB is working with authentication
+      shell: |
+        mongosh -u "{{ mongo_admin_user }}" -p "{{ mongo_admin_password }}" --authenticationDatabase admin --eval "db.adminCommand('listDatabases')" --quiet
+      register: mongo_verify
+      changed_when: false
+      failed_when: mongo_verify.rc != 0
 
     - name: Create challenge directory structure
       file:
@@ -149,6 +185,12 @@
       environment:
         MONGO_ADMIN_USER: "{{ mongo_admin_user }}"
         MONGO_ADMIN_PASSWORD: "{{ mongo_admin_password }}"
+      args:
+        executable: /bin/bash
+      register: ingest_result
+      failed_when:
+        - ingest_result.rc != 0
+        - "'already exists' not in ingest_result.stderr"
 
     - name: Remove temp ingestion script
       file:
@@ -170,15 +212,6 @@
         owner: "{{ ansible_user }}"
         group: "{{ ansible_user }}"
         mode: 0755
-
-    - name: Copy helper script to check MongoDB status (instructor only)
-      copy:
-        src: "{{ dir_path.mongo }}/scripts/check_mongo.sh"
-        dest: /usr/local/bin/check_mongo
-        owner: root
-        group: root
-        mode: 0755
-      tags: instructor
 
     - name: Create credentials file for students
       copy:
@@ -216,5 +249,5 @@
           - "Challenge directory: /home/{{ ansible_user }}/mongo-challenge"
           - "MongoDB Admin User: {{ mongo_admin_user }}"
           - "MongoDB Admin Password: {{ mongo_admin_password }}"
-          - "Students should start by reading: ~/mongo-challenge/tasks.txt"
-          - "Instructor can check environment: sudo check_mongo"
+          - "Students should start by reading: ~/mongo-challenge/task.txt"
+          - "MongoDB authentication verified: {{ mongo_verify.rc == 0 | ternary('SUCCESS', 'FAILED') }}"
