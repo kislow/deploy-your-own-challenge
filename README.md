@@ -4,19 +4,6 @@ Welcome to **Deploy Your Own Challenge** a hands-on playground where you can **s
 
 This repo is built for engineers who believe the best way to learn DevOps is to **deploy it yourself**, not just read about it.
 
-## No Platforms. No Excuses.
-
-Not every challenge needs a Hackerrank sign-up or pre-built test.
-Sometimes the best exercises are **custom-built**, creative, cost-effective, and tailored to **your company's workflows** or **internal upskilling programs**.
-This repo is for engineers who learn by deploying, experimenting, and thinking differently.
-
-🧩 Tips for Junior Engineers
-
-⚠️ Hands-on first, AI second
-If you're new to DevOps, resist the urge to copy-paste solutions from AI or forums.
-The real learning comes from reading **official documentation**, experimenting, and troubleshooting yourself.
-AI can be a helpful assistant, but don't let it replace understanding why something works.
-
 💡 Start small, break things, fix them, and gradually build confidence, that's how professional DevOps engineers are made.
 
 ---
@@ -108,6 +95,21 @@ Build and deploy a Go application. Understand compilation, binary execution, and
 make go-app HOST=localhost
 ```
 
+### 🗂️ Database Challenges
+
+#### **MongoDB Backup & Recovery Challenge**
+
+**Difficulty: Intermediate**
+**Tags: mongodb-backup-challenge**
+
+Master MongoDB backup strategies and disaster recovery procedures. Learn to create automated backups, handle database restoration, and implement robust recovery plans.
+
+**Skills**: MongoDB administration, backup strategies, disaster recovery, automation, database security
+
+```bash
+make mongo HOST=localhost
+```
+
 ---
 
 ## 🧩 What You'll Find Here
@@ -136,6 +138,7 @@ make curl HOST=localhost
 make webserver HOST=localhost
 make go-app HOST=localhost
 make psql HOST=localhost
+make mongo HOST=localhost
 
 # Deploy to remote VM
 make curl HOST=198.168.1.100
@@ -203,6 +206,7 @@ make dry-run-tag HOST=localhost TAGS=linux-curl-challenge
 2. **Linux Webserver** → Learn web server fundamentals
 3. **PostgreSQL Docker** → Understand containerization
 4. **Go App** → Deploy real applications
+5. **Mongodb** → Hands on Backup and Disaster Recovery
 
 Each challenge builds on concepts from previous ones!
 
@@ -229,6 +233,19 @@ Everything above, plus:
 
 ---
 
+## No Platforms. No Excuses.
+
+Not every challenge needs a Hackerrank sign-up or pre-built test.
+Sometimes the best exercises are **custom-built**, creative, cost-effective, and tailored to **your company's workflows** or **internal upskilling programs**.
+This repo is for engineers who learn by deploying, experimenting, and thinking differently.
+
+🧩 Tips for Junior Engineers
+
+⚠️ Hands-on first, AI second
+If you're new to DevOps, resist the urge to copy-paste solutions from AI or forums.
+The real learning comes from reading **official documentation**, experimenting, and troubleshooting yourself.
+AI can be a helpful assistant, but don't let it replace understanding why something works.
+
 ## 💬 Feedback & Contributions
 
 We value feedback, each challenge evolves based on real-world input.
@@ -245,6 +262,6 @@ If you have ideas for new challenges or improvements, feel free to open a **Pull
 
 ## 🌐 Connect
 
-Tag your setups, screenshots, or notes with **#DeployYourOwnChallenge** on social, let's grow a community that learns by deploying.
+Tag your setups, screenshots, or notes with **#DeployYourOwnChallenge** on social, learn by deploying.
 
 > "You don't learn DevOps by watching you learn it by deploying."
