@@ -48,8 +48,8 @@ ifndef HOST
 endif
 
 # Dynamic Challenge Runner
-.PHONY: base kind go-app curl webserver psql mongo ssh-keys
-base kind go-app curl webserver psql mongo ssh-keys: check-host
+.PHONY: base kind go-app curl webserver psql mongo promehteus ssh-keys
+base kind go-app curl webserver psql mongo prometheus ssh-keys: check-host
 	@$(CHALLENGE_SCRIPT) $@ HOST=$(HOST)
 
 # ============================================

@@ -24,3 +24,6 @@
 
     - role: mongodb-backup-challenge
       tags: [mongodb-backup-challenge]
+
+    - role: prometheus-challenge
+      tags: [prometheus-challenge]

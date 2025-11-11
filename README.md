@@ -110,6 +110,21 @@ Master MongoDB backup strategies and disaster recovery procedures. Learn to crea
 make mongo HOST=localhost
 ```
 
+### 📊 Monitoring Challenges
+
+#### **Prometheus & Grafana Observability Challenge**
+
+**Difficulty:** Intermediate
+**Tags:** prometheus-challenge
+
+Master the art of observability with Prometheus and Grafana. Learn how to collect metrics from applications, connect data sources and create dashboards, .
+
+**Skills:** Metrics collection, dashboard design, time-series analysis, observability best practices
+
+```bash
+make prometheus HOST=localhost
+```
+
 ---
 
 ## 🧩 What You'll Find Here

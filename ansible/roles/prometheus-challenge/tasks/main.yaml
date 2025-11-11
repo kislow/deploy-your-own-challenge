@@ -1,0 +1,88 @@
+- name: Setup Prometheus & Grafana Monitoring Challenge
+  become: yes
+  block:
+
+    # ------------------------------------------------------
+    # 1️⃣ Create Challenge Directory
+    # ------------------------------------------------------
+    - name: Create Prometheus & Grafana challenge dir in user home
+      file:
+        path: "/home/{{ ansible_user }}/challenge"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+      tags: prometheus-challenge
+
+    # ------------------------------------------------------
+    # 2️⃣ Copy Core Files
+    # ------------------------------------------------------
+    - name: Copy Core files
+      copy:
+        src: "{{ dir_path.prometheus_grafana }}"
+        dest: "/home/{{ ansible_user }}/challenge"
+        mode: '0644'
+      tags: prometheus-challenge
+
+    # ------------------------------------------------------
+    # 4️⃣ Build and Start Monitoring Stack (inline)
+    # ------------------------------------------------------
+    - name: Clean up any previous containers
+      command: docker compose down --remove-orphans
+      args:
+        chdir: "/home/{{ ansible_user }}/challenge/prometheus"
+      ignore_errors: yes
+      tags: prometheus-challenge
+
+    - name: Build and start Prometheus–Grafana stack
+      command: docker compose up -d --build
+      args:
+        chdir: "/home/{{ ansible_user }}/challenge/prometheus"
+      tags: prometheus-challenge
+
+    - name: Show running containers
+      command: docker ps --format "table {% raw %}{{.Names}}\t{{.Status}}\t{{.Ports}}{% endraw %}"
+      register: container_list
+      tags: prometheus-challenge
+
+    - name: Display container summary
+      debug:
+        msg: |
+          🚀 Containers built and running successfully!
+          {{ container_list.stdout }}
+      tags: prometheus-challenge
+
+
+    # ------------------------------------------------------
+    # 5️⃣ Clean Up Temporary Files
+    # ------------------------------------------------------
+    - name: Remove spike script from build context after build
+      file:
+        path: "/home/{{ ansible_user }}/challenge/prometheus/flask-api/spike.py"
+        state: absent
+      tags: prometheus-challenge
+
+    # ------------------------------------------------------
+    # 6️⃣ Register Challenge Location and Display Summary
+    # ------------------------------------------------------
+    - name: Register monitoring challenge location
+      set_fact:
+        monitoring_challenge_path: "/home/{{ ansible_user }}/challenge/prometheus"
+      tags: prometheus-challenge
+
+    - name: Display challenge summary
+      debug:
+        msg: |
+          ✅ Prometheus & Grafana Monitoring Challenge deployed successfully!
+          📁 Challenge location: {{ monitoring_challenge_path }}
+
+          Services:
+            - Prometheus → http://localhost:9090
+            - Grafana → http://localhost:3000
+            - Flask API → http://localhost:5000/api/customers
+
+          The Flask container now runs:
+            - Flask app (supervised)
+            - Logs visible via: docker logs -f flask-api
+
+      tags: prometheus-challenge

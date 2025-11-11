@@ -26,7 +26,7 @@ fi
 
 # Set dynamic SSH connection parameters with defaults
 export ANSIBLE_REMOTE_USER="${REMOTE_USER:-ubuntu}"
-export ANSIBLE_PRIVATE_KEY_FILE="${SSH_KEY:-~/.ssh/id_rsa}"
+export ANSIBLE_PRIVATE_KEY_FILE="${SSH_KEY:-~/.ssh/id_ed25519}"
 
 # Auto-detect localhost
 if [[ "$HOST" == "localhost" ]] || [[ "$HOST" == "127.0.0.1" ]]; then
@@ -50,15 +50,16 @@ run_ansible() {
 }
 
 case "${1:-}" in
-  base)        run_ansible "Base setup" "base" ;;
-  kind)        run_ansible "Kind cluster setup" "kind" ;;
-  go-app)      run_ansible "Go App exercise" "go-app-challenge" ;;
-  curl)        run_ansible "Linux curl exercise" "linux-curl-challenge" ;;
-  webserver)   run_ansible "Linux webserver exercise" "linux-webserver-challenge" ;;
-  psql)        run_ansible "PostgreSQL docker exercise" "postgres-docker-challenge" ;;
-  mongo)       run_ansible "MongoDb backup & disaster recovery exercise" "mongodb-backup-challenge" ;;
-  ssh-keys)    run_ansible "Add SSH public keys" "ssh-keys" ;;
-  deploy)      run_ansible "Full deployment" "" ;;
+  base)                 run_ansible "Base setup" "base" ;;
+  kind)                 run_ansible "Kind cluster setup" "kind" ;;
+  go-app)               run_ansible "Go App exercise" "go-app-challenge" ;;
+  curl)                 run_ansible "Linux curl exercise" "linux-curl-challenge" ;;
+  webserver)            run_ansible "Linux webserver exercise" "linux-webserver-challenge" ;;
+  psql)                 run_ansible "PostgreSQL docker exercise" "postgres-docker-challenge" ;;
+  mongo)                run_ansible "MongoDb backup & disaster recovery exercise" "mongodb-backup-challenge" ;;
+  prometheus)           run_ansible "Prometheus & Grafana exercise" "prometheus-challenge" ;;
+  ssh-keys)             run_ansible "Add SSH public keys" "ssh-keys" ;;
+  deploy)               run_ansible "Full deployment" "" ;;
   *)
     echo "Usage: $0 {base|kind|go-app|curl|webserver|psql|ssh-keys|deploy}"
     exit 1

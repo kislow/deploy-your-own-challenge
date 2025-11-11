@@ -1,0 +1,128 @@
+🧩 Kadir’s Tech Playground – Monitoring Challenge
+================================================
+
+Challenge Title:
+----------------
+“See What Your Containers Are Doing (API Edition)”
+
+Objective:
+----------
+You’ll deploy a monitoring stack with Prometheus, Grafana, and a Flask API that exposes `/api/customers` metrics.
+Your goal is to observe, interpret, and explain what’s happening inside your containers.
+
+Stack Overview:
+---------------
+| Service        | Purpose                          | Port  |
+|----------------|----------------------------------|-------|
+| prometheus     | Collects and stores metrics      | 9090  |
+| grafana        | Visualizes metrics               | 3000  |
+| flask-api      | Sample API exposing /metrics     | 5000  |
+
+Prometheus scrapes all of these targets. Grafana visualizes them.
+
+------------------------------------------------------------
+⚙️ Task 1 – Deploy the Stack
+------------------------------------------------------------
+From your challenge directory:
+
+  cd ~/challenge/prometheus
+  docker compose up -d
+
+Verify containers are running:
+
+  docker ps
+
+✅ Expected: prometheus, grafana and flask-api are “Up”.
+
+------------------------------------------------------------
+🔍 Task 2 – Explore Prometheus
+------------------------------------------------------------
+Open Prometheus:
+
+  http://localhost:9090
+
+Go to **Status → Targets**
+You should see:
+
+  prometheus:9090
+  flask-api:5000
+
+✅ All should be UP.
+
+------------------------------------------------------------
+📡 Task 3 – Inspect Flask API Metrics
+------------------------------------------------------------
+Prometheus scrapes `/metrics` from the Flask container.
+
+Try these queries:
+
+  api_requests_total
+  rate(api_requests_total[1m])
+  api_request_latency_seconds_bucket
+
+Observe how these metrics evolve over time.
+Something inside your stack seems to generate periodic activity — can you identify what it is?
+
+------------------------------------------------------------
+🧪 Task 4 – Investigate the API Container
+------------------------------------------------------------
+Check the logs inside the Flask container:
+
+  docker logs -f flask-api
+
+Or inspect the log directory:
+
+  docker exec -it flask-api ls /var/log
+
+One of the log files holds the key to understanding the repeating pattern.
+
+------------------------------------------------------------
+📊 Task 5 – Connect Grafana
+------------------------------------------------------------
+Access Grafana:
+
+  http://localhost:3000
+  Login: admin / admin
+
+Add Prometheus as a data source:
+  URL: http://prometheus:9090
+
+Create a new **Time Series** panel and run:
+
+  rate(api_requests_total[1m])
+
+You should begin to see a pattern forming in the graph — but what’s causing it?
+
+------------------------------------------------------------
+🧭 Task 6 – Dig Deeper (Optional)
+------------------------------------------------------------
+- Create a panel for average request latency:
+    histogram_quantile(0.95, sum(rate(api_request_latency_seconds_bucket[1m])) by (le))
+- Compare request rate vs. CPU or memory usage.
+- Predict what would happen if the request frequency changed.
+
+------------------------------------------------------------
+🎯 Mission Summary
+------------------------------------------------------------
+✅ Prometheus scrapes multiple targets
+✅ Grafana visualizes live metrics
+✅ The API produces measurable behaviour over time
+✅ You’ve built your first observability stack
+
+------------------------------------------------------------
+🧠 Next Week
+------------------------------------------------------------
+“Dashboards & Alerts – When Metrics Start Talking Back.”
+
+You’ll create Grafana dashboards, add exporters, and build simple alert rules.
+
+------------------------------------------------------------
+💡 Need help?
+------------------------------------------------------------
+If you get stuck, read the `HINTS.md` file for subtle clues.
+Avoid looking for direct answers — the real learning is in finding out *why* your metrics look the way they do.
+
+Bonus Question:
+---------------
+How does Prometheus decide when to scrape a target, and what happens if it misses one interval?
+Write your answer in one clear sentence.

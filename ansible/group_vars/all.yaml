@@ -6,6 +6,7 @@ dir_path:
   webserver: "{{ playbook_dir }}/../challenges/linux/webserver"
   psql: "{{ playbook_dir }}/../challenges/postgres"
   mongo: "{{ playbook_dir }}/../challenges/mongo-backup"
+  prometheus_grafana: "{{ playbook_dir }}/../challenges/monitoring/prometheus"
   rootpw_file: /root/rootpw
 
 pub_keys:
