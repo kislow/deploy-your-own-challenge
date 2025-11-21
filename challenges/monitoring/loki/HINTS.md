@@ -1,7 +1,6 @@
 # 🧠 Kadir's Tech Playground – Hints
 
 ## 🚀 Quick Start
-
 ```bash
 cd ~/challenge/loki
 docker compose up -d
@@ -15,66 +14,81 @@ docker compose ps
 ```
 ---
 
-## 📚 Useful Commands
+## 🏗️ System Architecture
+```
+Student → Order Service → Flask API (validates customer)
+              ↓              ↓
+          Creates Order
+              ↓
+          Worker (processes order)
 
-### Docker Commands
+All logs flow to:
+Promtail → Loki → Grafana (you query here)
+```
+
+**Services:**
+- **Flask API** (Port 5000): Validates customers
+- **Order Service** (Port 3001): Creates orders
+- **Worker**: Processes orders every 30 seconds
+- **promtail**: Collects and ships logs to Loki
+- **Loki** (Port 3100): Stores logs
+- **Grafana** (Port 3000): Query interface
+
+---
+
+## 📖 Challenge Walkthrough
+
+### Level 1: Setup & Verify
+
+**1.1 Check Services Are Running**
 ```bash
-# Check Loki is receiving logs
-curl http://localhost:3100/ready
-
-# View container logs directly
-docker logs -f flask-api
-docker logs -f order-service
-docker logs -f worker
-
-# Restart a service
-docker restart promtail
-
-# Check all running containers
 docker ps
+# Should see: loki, promtail, grafana, flask-api, order-service, worker
 ```
 
-### LogQL Queries (for Grafana)
+**1.2 Verify Promtail/Loki versions**
 
-```logql
-# All logs
-{job="docker"}
-
-# Only Flask API logs
-{container="flask-api"}
-
-# Only Order Service logs
-{container="order-service"}
-
-# Only errors
-{job="docker"} |= "ERROR"
-
-# Errors in last 5 minutes
-{job="docker"} |= "ERROR" [5m]
-
-# JSON parsing (Flask and Order Service use JSON)
-{container="order-service"} | json
-
-# Filter by specific error
-{container="flask-api"} |= "database_timeout"
-
-# Count errors over time
-count_over_time({job="docker"} |= "ERROR" [1h])
-```
-
-## 🧪 Generate Traffic (Create Orders)
-
-The system needs orders to show the bug! Create orders manually:
+Especially If you see errors indicating that images are not compatible:
 ```bash
-# Create a single order
+
+# Restart
+docker compose down
+docker compose up -d
+```
+
+**1.3 Verify Loki is Receiving Logs**
+```bash
+curl http://localhost:3100/ready
+# Should return: "ready"
+
+# Check Promtail connection
+docker logs promtail | grep -i "connected"
+```
+
+**1.4 Access Grafana**
+- Open: `http://<EC2_PUBLIC_IP>:3000`
+- Login: admin/admin
+- Go to: Explore (compass icon) → Select "Loki"
+
+**1.5 Test Basic Query**
+```logql
+{job="docker"}
+```
+✅ If you see logs → System is working!
+❌ If "No data" → See Troubleshooting section below
+
+---
+
+### Level 2: Generate Traffic & Find Errors
+
+**2.1 Create Test Orders**
+```bash
+# Single order
 curl -X POST http://localhost:3001/orders \
   -H "Content-Type: application/json" \
   -d '{"customerId": 1, "product": "Laptop", "amount": 1200}'
 
-# View all orders
-curl http://localhost:3001/orders
-
-# Generate multiple orders to see the pattern (recommended!)
+# Generate 20 orders to see the bug pattern
 for i in {1..20}; do
   curl -X POST http://localhost:3001/orders \
     -H "Content-Type: application/json" \
@@ -84,144 +98,317 @@ for i in {1..20}; do
 done
 ```
 
+**2.2 View All Orders**
+```bash
+curl http://localhost:3001/orders | jq
+# Note which ones have status: "pending" vs "completed"
+```
+
+**2.3 Find Errors in Grafana**
+```logql
+# Show all errors
+{job="docker"} |= "ERROR"
+```
+
+**Questions to answer:**
+- Which service shows the most errors?
+- What's the error message?
+- Do errors happen randomly or in patterns?
+
 ---
 
-## 🔍 Investigation Tips
+### Level 3: Investigate Root Cause
 
-### Level 1: Getting Started
-- **Can't access Grafana?** Make sure port 3000 is open in your EC2 security group
-- **No logs showing?** Wait 30 seconds after starting, then refresh Grafana
-- **Loki datasource not working?** It's auto-configured, just select "Loki" in Explore
+**3.1 Compare Services**
+```logql
+# Flask API errors
+{container="flask-api"} |= "ERROR"
 
-### Level 2: Finding Errors
-- Start with: `{job="docker"} |= "ERROR"`
-- Look at timestamps - do errors happen randomly or in patterns?
-- Compare Flask API logs with Order Service logs at the same time
+# Order Service errors
+{container="order-service"} |= "ERROR"
+```
 
-### Level 3: Advanced Queries
-- Use the "Explore" tab in Grafana (compass icon)
-- Click "Log browser" to see available labels
-- Use `|=` for contains, `!=` for not contains
-- Use `| json` to parse JSON logs into fields
+**Key insight:** One service *generates* errors, the other *reports* them.
 
-### Level 4: Root Cause
-- Which service logs the error first?
-- What's the error message exactly?
-- Is it always the same error or different ones?
-- Try creating multiple orders - how often do they fail?
+**3.2 Find the Exact Error**
+```logql
+# Look for specific error in Flask
+{container="flask-api"} |= "database_timeout"
+```
+
+**3.3 Correlate Logs**
+Look at the same timestamp:
+- Flask API logs: "database_timeout" for customer_id: 1
+- Order Service logs: "validation failed" for customer_id: 1
+
+**3.4 Calculate Failure Rate**
+```logql
+# Count errors in last hour
+count_over_time({container="flask-api"} |= "ERROR" [1h])
+```
+
+Create 20 orders → Count failures → Calculate percentage
+
+**Expected:** ~15% failure rate (3 out of 20)
+
+---
+
+### Level 4: Advanced Analysis
+
+**4.1 Parse JSON Logs**
+```logql
+{container="flask-api"} | json
+```
+
+**4.2 Filter by Customer ID**
+```logql
+{container="flask-api"} | json | customer_id="1"
+```
+
+**4.3 Time-based Queries**
+```logql
+# Errors in last 5 minutes
+{job="docker"} |= "ERROR" [5m]
+
+# Errors for specific service in last hour
+{container="flask-api"} |= "ERROR" [1h]
+```
+
+**4.4 Count Errors Over Time**
+```logql
+count_over_time({container="flask-api"} |= "database_timeout" [1h])
+```
+
+---
+
+## 🎯 Progressive Hints
+
+<details>
+<summary>💡 Hint 1: Can't see any logs in Grafana?</summary>
+
+**Check Loki health:**
+```bash
+curl http://localhost:3100/ready
+```
+
+**Check Promtail is connected:**
+```bash
+docker logs promtail | grep -i "loki"
+# Should see: "connected to Loki"
+```
+
+**Restart if needed:**
+```bash
+docker compose restart promtail
+# Wait 30 seconds, then refresh Grafana
+```
+</details>
+
+<details>
+<summary>💡 Hint 2: Which service has the bug?</summary>
+
+Run both queries and compare:
+```logql
+{container="flask-api"} |= "ERROR"
+{container="order-service"} |= "ERROR"
+```
+
+The service with "database_timeout" is the root cause!
+</details>
+
+<details>
+<summary>💡 Hint 3: How to find the failure rate?</summary>
+
+Create 20 orders, then:
+```bash
+# Count successful orders
+curl http://localhost:3001/orders | jq '.orders | length'
+
+# In Grafana, count errors:
+count_over_time({container="flask-api"} |= "database_timeout" [5m])
+```
+
+Calculate: (errors / total orders) × 100 = ~25%
+</details>
+
+<details>
+<summary>💡 Hint 4: Why do some orders succeed and others fail?</summary>
+
+The Flask API has a **random bug**. It's not related to:
+- Customer ID
+- Product type
+- Order amount
+- Time of day
+
+It's purely random (~25% chance of failure)!
+</details>
+
+<details>
+<summary>💡 Hint 5: How would you fix this in production?</summary>
+
+**Immediate fix:**
+- Add retry logic with exponential backoff
+- Circuit breaker pattern
+
+**Root cause fix:**
+- Fix the database connection issue
+- Add proper connection pooling
+- Improve error handling
+
+**Monitoring:**
+- Alert on >5% error rate
+- Dashboard showing error trends
+</details>
 
 ---
 
 ## 🐛 Troubleshooting
 
-### "No data" in Grafana
+### Problem: "No data" in Grafana
+
+**Step 1: Check Loki**
 ```bash
-# Check Promtail is running
-docker logs promtail
-
-# Check Loki is healthy
 curl http://localhost:3100/ready
-
-# Restart Promtail if needed
-docker compose restart promtail
+# Should return: "ready"
 ```
 
-### Services won't start
+**Step 2: Check Promtail**
 ```bash
-# Check what's wrong
-docker compose logs
+docker logs promtail
+# Look for: "connected to Loki" or errors
+```
 
-# Clean restart
+**Step 3: Restart Promtail**
+```bash
+docker compose restart promtail
+# Wait 30 seconds
+```
+
+**Step 4: Check containers are labeled**
+```bash
+docker inspect flask-api | grep -A5 Labels
+# Should see: "logging": "promtail"
+```
+
+---
+
+### Problem: Promtail API Version Error
+
+**Error:**
+```
+client version 1.42 is too old. Minimum supported API version is 1.44
+```
+
+**Fix:**
+```bash
+# check dockerhub for newer version
+# Edit docker-compose.yml
+# Change promtail image from 2.9.3 to 3.0.0
 docker compose down
 docker compose up -d
 ```
 
-### Can't create orders
+---
+
+### Problem: Orders Not Being Processed
+
+**Check worker is running:**
 ```bash
-# Test Flask API directly
+docker logs worker
+# Should see: "Processing order X"
+```
+
+**Check worker can reach order service:**
+```bash
+docker exec worker wget -O- http://order-service:3001/orders
+```
+
+**If 404 errors on /status endpoint:**
+The order-service is missing the PATCH endpoint - ask instructor!
+
+---
+
+### Problem: Can't Create Orders
+
+**Test Flask API:**
+```bash
 curl http://localhost:5000/customers
-
-# Test order creation
-curl -X POST http://localhost:3001/orders \
-  -H "Content-Type: application/json" \
-  -d '{"customerId": 1, "product": "Laptop", "amount": 1200}'
+# Should return customer list
 ```
 
----
-
-## 💡 Learning Resources
-
-### LogQL Basics
-- Labels: `{container="flask-api"}`
-- Line filters: `|= "ERROR"` (contains)
-- JSON parser: `| json`
-- Time range: `[5m]` (last 5 minutes)
-
-### Understanding the Services
-- **Flask API (Port 5000)**: Validates customers before orders
-- **Order Service (Port 3001)**: Creates orders, calls Flask
-- **Worker**: Processes orders in background
-- **Loki (Port 3100)**: Stores logs
-- **Grafana (Port 3000)**: Query and visualize logs
-
----
-
-## 🎯 Hints by Level
-
-<details>
-<summary>Hint 1: Where to start?</summary>
-
-Go to Grafana → Explore → select "Loki" datasource → try:
-```logql
-{job="docker"}
-```
-You should see logs from all services.
-</details>
-
-<details>
-<summary>Hint 2: How to find errors?</summary>
-
-Filter for errors:
-```logql
-{job="docker"} |= "ERROR"
-```
-Look at which container shows errors most frequently.
-</details>
-
-<details>
-<summary>Hint 3: Which service has the bug?</summary>
-
-Compare these two queries:
-```logql
-{container="flask-api"} |= "ERROR"
-{container="order-service"} |= "ERROR"
-```
-One service generates errors, the other reports them.
-</details>
-
-<details>
-<summary>Hint 4: What's the exact error?</summary>
-
-Look for the error in Flask API:
-```logql
-{container="flask-api"} |= "database_timeout"
-```
-This is your root cause!
-</details>
-
-<details>
-<summary>Hint 5: How often does it fail?</summary>
-
-The bug is random! Create multiple test orders:
+**Test customer validation:**
 ```bash
-for i in {1..20}; do
-  curl -X POST http://localhost:3001/orders \
-    -H "Content-Type: application/json" \
-    -d '{"customerId": 1, "product": "Test", "amount": 100}'
-  sleep 1
-done
+curl http://localhost:5000/customers/1/validate
+# Should return: {"valid": true} (85% of time)
+# Or: {"valid": false, "reason": "database_timeout"} (15%)
 ```
-About 15% will fail.
-</details>
+
+**Try different customer IDs:**
+- Valid: 1, 2, 4 (active customers)
+- Invalid: 3 (inactive), 5 (suspended)
 
 ---
+
+## 📚 LogQL Quick Reference
+
+| Query | Description |
+|-------|-------------|
+| `{job="docker"}` | All logs |
+| `{container="flask-api"}` | Specific container |
+| `\|= "ERROR"` | Contains "ERROR" |
+| `!= "INFO"` | Doesn't contain "INFO" |
+| `\| json` | Parse JSON logs |
+| `[5m]` | Last 5 minutes |
+| `count_over_time()` | Count matches |
+
+**Examples:**
+```logql
+# All errors
+{job="docker"} |= "ERROR"
+
+# Flask errors only
+{container="flask-api"} |= "ERROR"
+
+# Parse JSON and filter
+{container="flask-api"} | json | customer_id="1"
+
+# Count errors per minute
+count_over_time({job="docker"} |= "ERROR" [1m])
+```
+
+---
+
+## 🎓 What You're Learning
+
+By completing this challenge, you'll understand:
+
+✅ **Centralized Logging**
+- Why it matters in distributed systems
+- How Promtail collects logs
+- How Loki stores and indexes logs
+
+✅ **Log Correlation**
+- Tracing requests across services
+- Finding root cause vs symptoms
+- Using timestamps to correlate events
+
+✅ **LogQL Queries**
+- Label-based filtering
+- Text search and parsing
+- Time-based queries
+- Aggregations
+
+✅ **Debugging Distributed Systems**
+- Identifying failure patterns
+- Statistical analysis (25% failure rate)
+- Service dependency troubleshooting
+
+---
+
+## 💡 Pro Tips
+
+1. **Always check logs with timestamps** - helps correlate issues
+2. **Start broad, then narrow down** - {job="docker"} → {container="flask-api"} → |= "ERROR"
+3. **Use JSON parsing** - structured logs are easier to query
+4. **Count things** - helps identify patterns (15% failure!)
+5. **Check all services** - the bug might not be where you think
