@@ -58,6 +58,7 @@ case "${1:-}" in
   psql)                 run_ansible "PostgreSQL docker exercise" "postgres-docker-challenge" ;;
   mongo)                run_ansible "MongoDb backup & disaster recovery exercise" "mongodb-backup-challenge" ;;
   prometheus)           run_ansible "Prometheus & Grafana exercise" "prometheus-challenge" ;;
+  loki)                 run_ansible "Loki logs exercise" "loki-challenge" ;;
   ssh-keys)             run_ansible "Add SSH public keys" "ssh-keys" ;;
   deploy)               run_ansible "Full deployment" "" ;;
   *)

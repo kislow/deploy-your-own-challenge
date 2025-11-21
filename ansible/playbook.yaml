@@ -27,3 +27,6 @@
 
     - role: prometheus-challenge
       tags: [prometheus-challenge]
+
+    - role: loki-challenge
+      tags: [loki-challenge]

@@ -7,7 +7,10 @@ dir_path:
   psql: "{{ playbook_dir }}/../challenges/postgres"
   mongo: "{{ playbook_dir }}/../challenges/mongo-backup"
   prometheus_grafana: "{{ playbook_dir }}/../challenges/monitoring/prometheus"
+  loki: "{{ playbook_dir }}/../challenges/monitoring/loki"
   rootpw_file: /root/rootpw
 
 pub_keys:
   - "ssh-ed25519 BBBBC3NzaC1lZDI1NTE5AAAAIC18cEmgukkzGJCCRdEnEl7cAkUfj/77df7a7dsf7d7d k.islow@example.com"
+  - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINvWS3/oqkXzpBcFszL9lrgvv5/NknpdKhIa6NRgVyhg siadadam2@gmail.com"
+  - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM8qcHktE0VtUCPq/odEFsMOjTmrBi77/TnzN/OBek1T aann20034@gmail.com"

@@ -1,0 +1,33 @@
+---
+- name: Deploy Loki Challenge
+  become: yes
+  block:
+    - name: Create challenge directory
+      file:
+        path: "/home/{{ ansible_user }}/challenge"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+      tags: loki-challenge
+
+    - name: Copy Core files
+      copy:
+        src: "{{ dir_path.loki }}"
+        dest: "/home/{{ ansible_user }}/challenge"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+      tags: loki-challenge
+
+    - name: Display challenge info
+      debug:
+        msg: |
+          ✅ Loki Challenge Deployed!
+
+          📍 Location: /home/{{ ansible_user }}/challenge/loki
+
+          🌐 Access:
+            Grafana: http://{{ ansible_host }}:3000 (admin/admin)
+            Flask API: http://{{ ansible_host }}:5000/customers
+            Orders: http://{{ ansible_host }}:3001/orders

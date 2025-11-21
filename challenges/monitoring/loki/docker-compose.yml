@@ -1,0 +1,55 @@
+services:
+  loki:
+    image: grafana/loki:2.9.3 # version compatible?
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yml:/etc/loki/local-config.yaml
+    command: -config.file=/etc/loki/local-config.yaml
+
+  promtail:
+    image: grafana/promtail:2.9.3 # version compatible?
+    container_name: promtail
+    volumes:
+      - ./promtail-config.yml:/etc/promtail/config.yml
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    command: -config.file=/etc/promtail/config.yml
+    depends_on:
+      - loki
+
+  grafana:
+    image: grafana/grafana:10.2.3 # version compatible?
+    container_name: grafana
+    ports:
+      - "3000:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=admin
+      - GF_USERS_ALLOW_SIGN_UP=false
+
+  flask-api:
+    build: ./flask-api
+    container_name: flask-api
+    ports:
+      - "5000:5000"
+    labels:
+      logging: "promtail"
+
+  order-service:
+    build: ./order-service
+    container_name: order-service
+    ports:
+      - "3001:3001"
+    environment:
+      - FLASK_API_URL=http://flask-api:5000
+    labels:
+      logging: "promtail"
+
+  worker:
+    build: ./worker
+    container_name: worker
+    environment:
+      - ORDER_SERVICE_URL=http://order-service:3001
+    labels:
+      logging: "promtail"

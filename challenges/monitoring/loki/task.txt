@@ -1,0 +1,53 @@
+🔍 The Missing Logs Mystery - Loki Challenge
+=============================================
+
+📖 SCENARIO
+-----------
+Welcome to TechCorp's E-Commerce Platform!
+
+The ops team is drowning in logs scattered across multiple services:
+- Python Flask API (customer service)
+- Node.js Order Service (order processing)
+- Python Worker (background jobs)
+
+Each service logs differently, and when things break, nobody can figure out
+what went wrong because logs are everywhere!
+
+YOUR MISSION: Set up centralized logging with Grafana Loki and solve the
+mystery of the failing orders.
+
+---
+
+🎯 CHALLENGE OBJECTIVES
+-----------------------
+
+Level 1: Basic Setup
+□ Start all services: docker compose up -d
+□ Ensure all services are running
+□ Access Grafana at http://<EC2_PUBLIC_IP>:3000 (admin/admin)
+□ Verify Loki datasource is connected
+□ View logs from all 3 services in Grafana
+□ Generate test orders (see HINTS.md for commands if necessary)
+□ Observe logs appearing in Grafana
+
+Level 2: Log Investigation
+□ Find which service is generating errors
+□ Identify the pattern: what triggers the failures?
+□ Correlate logs across services to trace a failed order
+□ Answer: Why are orders failing?
+
+Level 3: Advanced Queries
+□ Create a query that shows only ERROR logs
+□ Find logs from the last 5 minutes for the order-service
+□ Count how many errors occurred in the last hour
+□ Identify which customer IDs fail most often
+
+Level 4: Root Cause Analysis
+□ What is the exact error message?
+□ Which service has the bug?
+□ What percentage of requests fail?
+□ How would you fix this in production?
+
+---
+
+Hint: Check HINTS.md if you get stuck!
