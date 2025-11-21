@@ -13,7 +13,7 @@ logging.basicConfig(
 logger = logging.getLogger('background-worker')
 
 SERVICE_NAME = os.getenv('SERVICE_NAME', 'background-worker')
-ORDER_SERVICE_URL = os.getenv('ORDER_SERVICE_URL', 'http://localhost:3001')
+ORDER_SERVICE_URL = os.getenv('ORDER_SERVICE_URL', 'http://order-service:3001')
 PROCESS_INTERVAL = 30
 
 def process_pending_orders():
