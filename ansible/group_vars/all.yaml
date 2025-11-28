@@ -12,5 +12,3 @@ dir_path:
 
 pub_keys:
   - "ssh-ed25519 BBBBC3NzaC1lZDI1NTE5AAAAIC18cEmgukkzGJCCRdEnEl7cAkUfj/77df7a7dsf7d7d k.islow@example.com"
-  - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAINvWS3/oqkXzpBcFszL9lrgvv5/NknpdKhIa6NRgVyhg siadadam2@gmail.com"
-  - "ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIM8qcHktE0VtUCPq/odEFsMOjTmrBi77/TnzN/OBek1T aann20034@gmail.com"
