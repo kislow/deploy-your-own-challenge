@@ -2,10 +2,6 @@
 
 Welcome to **Deploy Your Own Challenge** a hands-on playground where you can **spin up real-world DevOps challenges**, break things, fix them, and learn the craft the right way.
 
-This repo is built for engineers who believe the best way to learn DevOps is to **deploy it yourself**, not just read about it.
-
-💡 Start small, break things, fix them, and gradually build confidence, that's how professional DevOps engineers are made.
-
 ---
 
 ## 🚀 Quick Start
@@ -35,7 +31,7 @@ make curl HOST=localhost
 
 ## 🎯 Available Challenges
 
-### 🐧 Linux Challenges
+### 🐧 1. Linux Challenges
 
 #### **Linux Curl Challenge**
 **Difficulty:** Beginner
@@ -51,6 +47,8 @@ make curl HOST=localhost
 
 ---
 
+### 🐧 2. Linux Challenges
+
 #### **Linux Webserver Challenge**
 **Difficulty:** Beginner
 **Tags:** `linux-webserver-challenge`
@@ -65,7 +63,7 @@ make webserver HOST=localhost
 
 ---
 
-### 🐳 Docker Challenges
+### 🐳 3. Docker Challenges
 
 #### **PostgreSQL Docker Challenge**
 **Difficulty:** Intermediate
@@ -81,7 +79,7 @@ make psql HOST=localhost
 
 ---
 
-### 🔧 Application Challenges
+### 🔧 4. Application Challenges
 
 #### **Go App Challenge**
 **Difficulty:** Intermediate
@@ -95,7 +93,9 @@ Build and deploy a Go application. Understand compilation, binary execution, and
 make go-app HOST=localhost
 ```
 
-### 🗂️ Database Challenges
+---
+
+### 🗂️ 5. Database Challenges
 
 #### **MongoDB Backup & Recovery Challenge**
 
@@ -110,7 +110,9 @@ Master MongoDB backup strategies and disaster recovery procedures. Learn to crea
 make mongo HOST=localhost
 ```
 
-### 📊 Monitoring Challenges
+---
+
+### 📊 6. Monitoring Challenges
 
 #### **Prometheus & Grafana Observability Challenge**
 
@@ -127,16 +129,20 @@ make prometheus HOST=localhost
 
 ---
 
-## 🧩 What You'll Find Here
+### 📚 7. Log Aggregation Challenge
 
-Each challenge folder contains:
+#### **Loki & Grafana Log Observability Challenge**
 
-- **Scenario:** a real-world DevOps problem or setup to tackle
-- **Setup:** Automated deployment via Ansible
-- **Objective:** clear learning goals and success criteria
-- **Hints (optional):** small nudges if you get stuck (HINTS.md)
+**Difficulty:** Intermediate
+**Tags:** loki-challenge
 
-💡 *Think of it as a lab manual meets production chaos.*
+Master centralized logging with Loki and Grafana. Learn how to collect logs from applications, query logs using LogQL, and build log-driven dashboards.
+
+**Skills:** Log collection, LogQL querying, log configuration, observability best practices
+
+```bash
+make loki HOST=localhost
+```
 
 ---
 
@@ -154,6 +160,8 @@ make webserver HOST=localhost
 make go-app HOST=localhost
 make psql HOST=localhost
 make mongo HOST=localhost
+make prometheus HOST=localhost
+make loki HOST=localhost
 
 # Deploy to remote VM
 make curl HOST=198.168.1.100
@@ -222,6 +230,8 @@ make dry-run-tag HOST=localhost TAGS=linux-curl-challenge
 3. **PostgreSQL Docker** → Understand containerization
 4. **Go App** → Deploy real applications
 5. **Mongodb** → Hands on Backup and Disaster Recovery
+6. **Prometheus** → Collecting and visualing metrics
+6. **Loki** → Collecting and visualing logs
 
 Each challenge builds on concepts from previous ones!
 
@@ -247,19 +257,6 @@ Everything above, plus:
 📖 **Full installation instructions:** [INSTALLATION.md](INSTALLATION.md)
 
 ---
-
-## No Platforms. No Excuses.
-
-Not every challenge needs a Hackerrank sign-up or pre-built test.
-Sometimes the best exercises are **custom-built**, creative, cost-effective, and tailored to **your company's workflows** or **internal upskilling programs**.
-This repo is for engineers who learn by deploying, experimenting, and thinking differently.
-
-🧩 Tips for Junior Engineers
-
-⚠️ Hands-on first, AI second
-If you're new to DevOps, resist the urge to copy-paste solutions from AI or forums.
-The real learning comes from reading **official documentation**, experimenting, and troubleshooting yourself.
-AI can be a helpful assistant, but don't let it replace understanding why something works.
 
 ## 💬 Feedback & Contributions
 
