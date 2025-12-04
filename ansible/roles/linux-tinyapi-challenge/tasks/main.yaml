@@ -1,0 +1,138 @@
+- name: Create tiny-linux-api challenge directory
+  file:
+    path: "/home/{{ ansible_user }}/challenge/tiny-linux-api"
+    state: directory
+    owner: "{{ ansible_user }}"
+    group: "{{ ansible_user }}"
+    mode: '0755'
+  tags: linux-tinyapi-challenge
+
+# ----------------------------------------------------------
+# Copy ONLY challenge instructions
+# ----------------------------------------------------------
+- name: Copy challenge metadata files
+  copy:
+    src: "{{ dir_path.tinyapi }}/{{ item }}"
+    dest: "/home/{{ ansible_user }}/challenge/tiny-linux-api/{{ item }}"
+    mode: '0644'
+  with_items:
+    - task.txt
+    - HINTS.md
+  tags: linux-tinyapi-challenge
+
+# ----------------------------------------------------------
+# Deploy API script directly into /opt/tinyapi
+# ----------------------------------------------------------
+- name: Ensure /opt/tinyapi exists
+  file:
+    path: /opt/tinyapi
+    state: directory
+    mode: '0755'
+  become: yes
+  tags: linux-tinyapi-challenge
+
+- name: Deploy API script (with wrong permissions intentionally)
+  copy:
+    src: "{{ dir_path.tinyapi }}/app.py"
+    dest: /opt/tinyapi/app.py
+    mode: '0644'   # intentionally not executable
+  become: yes
+  tags: linux-tinyapi-challenge
+
+# ----------------------------------------------------------
+# Deploy BROKEN systemd unit directly
+# ----------------------------------------------------------
+- name: Deploy systemd unit tinyapi.service (broken path)
+  copy:
+    src: "{{ dir_path.tinyapi }}/systemd/tinyapi.service"
+    dest: /etc/systemd/system/tinyapi.service
+    mode: '0644'
+  become: yes
+  tags: linux-tinyapi-challenge
+
+- name: Reload systemd
+  systemd:
+    daemon_reload: yes
+  become: yes
+  tags: linux-tinyapi-challenge
+
+# ----------------------------------------------------------
+# Break dependencies (Flask missing)
+# ----------------------------------------------------------
+- name: Remove flask to ensure failure
+  apt:
+    name: python3-flask
+    state: absent
+  become: yes
+  ignore_errors: yes
+  tags: linux-tinyapi-challenge
+
+# ----------------------------------------------------------
+# Firewall setup (Block API Port 5000)
+# ----------------------------------------------------------
+- name: Ensure ufw is installed
+  apt:
+    name: ufw
+    state: present
+  become: yes
+  tags: linux-tinyapi-challenge
+
+- name: Allow SSH in ufw
+  ufw:
+    rule: allow
+    name: OpenSSH
+  become: yes
+  ignore_errors: yes
+  tags: linux-tinyapi-challenge
+
+- name: Set default policies
+  ufw:
+    state: enabled
+    direction: incoming
+    policy: deny
+  become: yes
+  ignore_errors: yes
+  tags: linux-tinyapi-challenge
+
+- name: Ensure outgoing allowed
+  ufw:
+    state: enabled
+    direction: outgoing
+    policy: allow
+  become: yes
+  ignore_errors: yes
+  tags: linux-tinyapi-challenge
+
+- name: Block API port 5000
+  ufw:
+    rule: deny
+    port: '5000'
+    proto: tcp
+  become: yes
+  ignore_errors: yes
+  tags: linux-tinyapi-challenge
+
+- name: Reload firewall
+  command: ufw reload
+  become: yes
+  ignore_errors: yes
+  tags: linux-tinyapi-challenge
+
+# ----------------------------------------------------------
+# Summary
+# ----------------------------------------------------------
+- name: Register tiny Linux API challenge path
+  set_fact:
+    tinyapi_challenge_path: "/home/{{ ansible_user }}/challenge/tiny-linux-api"
+  tags: linux-tinyapi-challenge
+
+- name: Display challenge summary
+  debug:
+    msg: |
+      ✅ Tiny Linux API Challenge deployed!
+      📁 Challenge path: {{ tinyapi_challenge_path }}
+
+      Start here:
+        cd {{ tinyapi_challenge_path }}
+        cat task.txt
+  tags: linux-tinyapi-challenge

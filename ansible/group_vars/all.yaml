@@ -4,6 +4,7 @@ dir_path:
   go: "{{ playbook_dir }}/../challenges/golang/app"
   curl: "{{ playbook_dir }}/../challenges/linux/curl"
   webserver: "{{ playbook_dir }}/../challenges/linux/webserver"
+  tinyapi: "{{ playbook_dir }}/../challenges/linux/tinyapi"
   psql: "{{ playbook_dir }}/../challenges/postgres"
   mongo: "{{ playbook_dir }}/../challenges/mongo-backup"
   prometheus_grafana: "{{ playbook_dir }}/../challenges/monitoring/prometheus"

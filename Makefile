@@ -48,8 +48,8 @@ ifndef HOST
 endif
 
 # Dynamic Challenge Runner
-.PHONY: base kind go-app curl webserver psql mongo prometheus loki ssh-keys
-base kind go-app curl webserver psql mongo prometheus loki ssh-keys: check-host
+.PHONY: base kind go-app curl tinyapi webserver psql mongo prometheus loki ssh-keys
+base kind go-app curl tinyapi webserver psql mongo prometheus loki ssh-keys: check-host
 	@$(CHALLENGE_SCRIPT) $@ HOST=$(HOST)
 
 # ============================================
@@ -135,7 +135,7 @@ help:
 	@echo "  deploy-except   - Deploy all except SKIP=..."
 	@echo ""
 	@echo "Challenges:"
-	@echo "  base, kind, go-app, curl, webserver, psql, mongo, prometheus, loki ssh-keys"
+	@echo "  base, kind, go-app, curl, webserver, tinyapi, psql, mongo, prometheus, loki ssh-keys"
 	@echo ""
 	@echo "Terraform EC2:"
 	@echo "  ec2-plan, ec2-create, ec2-destroy"

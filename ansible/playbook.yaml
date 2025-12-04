@@ -19,6 +19,9 @@
     - role: linux-webserver-challenge
       tags: [linux-webserver-challenge]
 
+    - role: linux-tinyapi-challenge
+      tags: [linux-tinyapi-challenge]
+
     - role: postgres-docker-challenge
       tags: [postgres-docker-challenge]
 

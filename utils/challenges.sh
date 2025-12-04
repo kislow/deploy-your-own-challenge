@@ -54,6 +54,7 @@ case "${1:-}" in
   kind)                 run_ansible "Kind cluster setup" "kind" ;;
   go-app)               run_ansible "Go App exercise" "go-app-challenge" ;;
   curl)                 run_ansible "Linux curl exercise" "linux-curl-challenge" ;;
+  tinyapi)              run_ansible "Linux tiny api exercise" "linux-tinyapi-challenge" ;;
   webserver)            run_ansible "Linux webserver exercise" "linux-webserver-challenge" ;;
   psql)                 run_ansible "PostgreSQL docker exercise" "postgres-docker-challenge" ;;
   mongo)                run_ansible "MongoDb backup & disaster recovery exercise" "mongodb-backup-challenge" ;;
@@ -62,7 +63,7 @@ case "${1:-}" in
   ssh-keys)             run_ansible "Add SSH public keys" "ssh-keys" ;;
   deploy)               run_ansible "Full deployment" "" ;;
   *)
-    echo "Usage: $0 {base|kind|go-app|curl|webserver|psql|ssh-keys|deploy}"
+    echo "Usage: $0 {base|kind|go-app|curl|tinyapi|webserver|psql|mongo|prometheus|loki|ssh-keys|deploy}"
     exit 1
     ;;
 esac

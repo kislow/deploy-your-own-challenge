@@ -1,0 +1,13 @@
+[Unit]
+Description=Tiny API Service
+After=network.target
+
+[Service]
+User=root
+WorkingDirectory=/opt/tinyapi
+# API PATH
+ExecStart=/usr/bin/python3 /opt/tiny/app.py
+Restart=always
+
+[Install]
+WantedBy=multi-user.target

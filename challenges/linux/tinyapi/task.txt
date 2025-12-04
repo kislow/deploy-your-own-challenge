@@ -1,0 +1,96 @@
+# ===============================================
+
+# ⚙️ Tiny Linux API Challenge
+
+# ===============================================
+
+**Difficulty:** Beginner → Intermediate
+**Theme:** Linux debugging, systemd, firewalls, API troubleshooting
+
+---
+
+## 🧩 SCENARIO
+
+A tiny Python API on your Linux VM has gone offline.
+The service refuses to start, the port is closed, and external clients can’t reach it.
+
+Your teammates insist it “was working yesterday,” but now all eyes are on you.
+
+Your mission:
+**Bring the tinyapi service back to life and make it reachable from the outside world.**
+
+---
+
+## 🛠️ TASKS
+
+### **[ ] Task 1 — Investigate the Failure**
+
+Check the service’s behaviour, logs, and startup issues.
+Identify what’s actually preventing tinyapi from running.
+
+---
+
+### **[ ] Task 2 — Fix the systemd Service**
+
+Review the Unit file and correct the script path, working directory, or execution command.
+Make sure the service can start cleanly.
+
+---
+
+### **[ ] Task 3 — Correct File Permissions**
+
+Ensure that the API script has the right ownership and permissions so systemd can execute it without errors.
+
+---
+
+### **[ ] Task 4 — Install Missing Dependencies**
+
+Verify that all required modules/packages are installed so the Python API can actually run without import errors.
+
+---
+
+### **[ ] Task 5 — Ensure API Port is accessible**
+
+Make sure incoming traffic on port **5000** is allowed.
+
+---
+
+### **[ ] Task 6 — Local Verification**
+
+Confirm the API can be reached on the local machine.
+
+---
+
+### **[ ] Task 7 — External Verification**
+
+Confirm the API can be reached via the server’s public IP from outside on the same port.
+
+---
+
+### **[ ] Bonus — Custom API Response**
+
+Modify the API so it returns:
+
+```
+{"message": "Fixed by <your name>"}
+```
+
+---
+
+## 🎯 GOAL
+
+* tinyapi starts normally
+* API works locally
+* API is reachable externally
+* Bonus custom message appears
+
+---
+
+## 🏁 SUCCESS CRITERIA
+
+✔ Systemd service fixed
+✔ File permissions corrected
+✔ Dependencies installed
+✔ Port 5000 open externally
+✔ Local & remote access verified
+✔ Bonus improvement delivered
