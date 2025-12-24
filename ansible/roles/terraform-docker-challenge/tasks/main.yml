@@ -1,0 +1,67 @@
+---
+# ansible/roles/terraform-docker-challenge/tasks/main.yaml
+
+- name: Setup Terraform docker challenge
+  become: yes
+  block:
+
+    # 1️⃣ Create challenge directory
+    - name: Create terraform-docker challenge dir in user home
+      file:
+        path: "/home/{{ ansible_user }}/challenge/terraform-docker"
+        state: directory
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0755'
+      tags: terraform-docker-challenge
+
+    # 2️⃣ Copy Terraform + Docker files
+    - name: Copy terraform docker challenge files
+      copy:
+        src: "{{ dir_path.iac }}/terraform/docker/"
+        dest: "/home/{{ ansible_user }}/challenge/terraform-docker"
+        owner: "{{ ansible_user }}"
+        group: "{{ ansible_user }}"
+        mode: '0644'
+      tags: terraform-docker-challenge
+
+    # 3️⃣ Ensure docker-compose plugin is available
+    - name: Verify docker compose is installed
+      command: docker compose version
+      register: docker_compose_check
+      changed_when: false
+      failed_when: docker_compose_check.rc != 0
+      tags: terraform-docker-challenge
+
+    # 4️⃣ Start Docker
+    - name: Start Docker container
+      become_user: "{{ ansible_user }}"
+      command: docker compose up -d
+      args:
+        chdir: "/home/{{ ansible_user }}/challenge/terraform-docker"
+      tags: terraform-docker-challenge
+
+    # 5️⃣ Register challenge path
+    - name: Register terraform challenge location
+      set_fact:
+        terraform_challenge_path: "/home/{{ ansible_user }}/challenge/terraform-docker"
+      tags: terraform-docker-challenge
+
+    # 6️⃣ Display summary
+    - name: Display challenge summary
+      debug:
+        msg: |
+          ✅ Terraform Docker Challenge deployed successfully!
+
+          📁 Challenge location:
+            {{ terraform_challenge_path }}
+
+          🚀 What to do next:
+            cd {{ terraform_challenge_path }}
+            docker compose ps
+            cat task.txt
+
+          💡 Tip:
+            Docker is already running.
+            Focus on Terraform modules & best practices — not AWS credentials.
+      tags: terraform-docker-challenge

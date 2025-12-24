@@ -60,10 +60,11 @@ case "${1:-}" in
   mongo)                run_ansible "MongoDb backup & disaster recovery exercise" "mongodb-backup-challenge" ;;
   prometheus)           run_ansible "Prometheus & Grafana exercise" "prometheus-challenge" ;;
   loki)                 run_ansible "Loki logs exercise" "loki-challenge" ;;
+  tfdocker)            run_ansible "Terraform docker exercise" "terraform-docker-challenge" ;;
   ssh-keys)             run_ansible "Add SSH public keys" "ssh-keys" ;;
   deploy)               run_ansible "Full deployment" "" ;;
   *)
-    echo "Usage: $0 {base|kind|go-app|curl|tinyapi|webserver|psql|mongo|prometheus|loki|ssh-keys|deploy}"
+    echo "Usage: $0 {base|kind|go-app|curl|tinyapi|webserver|psql|mongo|prometheus|loki|tfdocker|ssh-keys|deploy}"
     exit 1
     ;;
 esac

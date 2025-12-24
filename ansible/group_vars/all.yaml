@@ -9,6 +9,7 @@ dir_path:
   mongo: "{{ playbook_dir }}/../challenges/mongo-backup"
   prometheus_grafana: "{{ playbook_dir }}/../challenges/monitoring/prometheus"
   loki: "{{ playbook_dir }}/../challenges/monitoring/loki"
+  tfdocker: "{{ playbook_dir }}/../challenges/iac/terraform/docker"
   rootpw_file: /root/rootpw
 
 pub_keys:

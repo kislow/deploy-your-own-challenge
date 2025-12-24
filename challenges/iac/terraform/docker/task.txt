@@ -1,0 +1,85 @@
+Terraform Playground – Local Infrastructure
+
+In this playground, you will use Terraform to create LOCAL
+infrastructure using Docker.
+
+You are NOT learning Docker.
+You are learning how to use Terraform properly.
+
+------------------------------------
+WHAT YOU NEED TO BUILD
+------------------------------------
+
+Using Terraform, create:
+
+1. Two PostgreSQL database containers
+2. Two application containers
+
+Each application must be connected to one database.
+
+------------------------------------
+HOW YOU MUST BUILD IT
+------------------------------------
+
+You must use Terraform modules.
+
+- One module for PostgreSQL databases
+- One module for applications
+
+In the ROOT Terraform files:
+- Do NOT create any resources
+- Only use modules, variables, and outputs
+
+------------------------------------
+IMPORTANT RULES
+------------------------------------
+
+❌ Do NOT use `resource` blocks in the root module
+❌ Do NOT hardcode values (names, ports, passwords, etc.)
+❌ Do NOT copy and paste infrastructure
+
+✅ Use modules
+✅ Use `for_each` to create multiple resources
+✅ Use variables and outputs to connect things
+
+🔥 Hint:
+# This configuration must work even if we add 10 more databases.
+# You are not allowed to duplicate module blocks.
+
+------------------------------------
+REQUIRED SETUP
+------------------------------------
+
+Your configuration must allow this:
+
+- 2 databases created from ONE database module
+- 2 apps created from ONE app module
+- Apps must get their database connection
+  from Terraform outputs (not hardcoded strings)
+
+------------------------------------
+WHAT MUST WORK
+------------------------------------
+
+1. `terraform init` runs without errors
+2. `terraform plan` shows:
+   - 2 databases
+   - 2 applications
+3. `terraform apply` creates all containers
+4. `terraform destroy` removes everything
+
+------------------------------------
+HOW TO VERIFY YOUR WORK
+------------------------------------
+
+- Run `docker ps` and see all containers running
+- Connect to a database using `psql`
+- Run `terraform output` and see database connection strings
+
+------------------------------------
+SUCCESS CRITERIA
+------------------------------------
+
+If you can change the number of apps or databases
+by only editing variables,
+you completed the task correctly.

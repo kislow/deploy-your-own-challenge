@@ -33,3 +33,6 @@
 
     - role: loki-challenge
       tags: [loki-challenge]
+
+    - role: terraform-docker-challenge
+      tags: [terraform-docker-challenge]
