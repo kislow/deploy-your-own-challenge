@@ -62,6 +62,14 @@ resource "aws_security_group" "main" {
     cidr_blocks = var.ssh_allowed_ips
   }
 
+    ingress {
+    description = "Flask API"
+    from_port   = 5005
+    to_port     = 5005
+    protocol    = "tcp"
+    cidr_blocks = var.ssh_allowed_ips
+  }
+
   ingress {
     description = "Loki"
     from_port   = 3100
